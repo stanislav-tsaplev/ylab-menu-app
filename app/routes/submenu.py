@@ -1,0 +1,51 @@
+from uuid import UUID
+
+from fastapi import APIRouter, HTTPException
+
+from ..models.submenu import SubmenuCreate, SubmenuUpdate, SubmenuRead
+from .. import crud
+
+
+router = APIRouter()
+
+
+@router.post("/", status_code=201)
+def create_submenu(menu_id: UUID, submenu: SubmenuCreate) -> SubmenuRead:
+    created_submenu = crud.create_submenu(menu_id, submenu)
+    if created_submenu is None:
+        raise HTTPException(status_code=404, detail="menu not found")
+    return created_submenu
+
+
+@router.patch("/{submenu_id}")
+def update_submenu(
+    menu_id: UUID, submenu_id: UUID, updated_submenu: SubmenuUpdate
+) -> SubmenuRead:
+    submenu = crud.update_submenu(submenu_id, updated_submenu)
+    if submenu is None:
+        raise HTTPException(status_code=404, detail="submenu not found")
+    return submenu
+
+
+@router.delete("/{submenu_id}")
+def delete_submenu(menu_id: UUID, submenu_id: UUID) -> None:
+    crud.delete_submenu(submenu_id)
+
+
+@router.get("/{submenu_id}")
+def read_submenu(menu_id: UUID, submenu_id: UUID) -> SubmenuRead:
+    submenu = crud.read_submenu(submenu_id)
+    if submenu is None:
+        raise HTTPException(status_code=404, detail="submenu not found")
+
+    dishes_count = crud.submenu.get_dishes_count(submenu_id)
+
+    return SubmenuRead.construct(
+        dishes_count=dishes_count,
+        **submenu.dict()
+    )
+
+
+@router.get("/")
+def read_all_submenus(menu_id: UUID) -> list[SubmenuRead]:
+    return crud.read_all_submenus(menu_id)
