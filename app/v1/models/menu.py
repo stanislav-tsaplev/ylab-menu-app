@@ -18,7 +18,7 @@ class Menu(MenuBase, table=True):
     submenus: list["Submenu"] = Relationship(
         back_populates="menu",
         sa_relationship_kwargs={
-            "cascade": "all, delete",   # Instruct the ORM how to track changes to local objects
+            "cascade": "all, delete",
             "passive_deletes": True,
         }
     )

@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlmodel import Session, select, update, delete, func
 
-from ..database import engine
+from ...database import engine
 from ..models.menu import Menu, MenuCreate, MenuUpdate
 from ..models import Submenu, Dish
 

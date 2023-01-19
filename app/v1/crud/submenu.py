@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlmodel import Session, select, update, delete, func
 from sqlalchemy.exc import IntegrityError
 
-from ..database import engine
+from ...database import engine
 from ..models.submenu import Submenu, SubmenuCreate, SubmenuUpdate
 from ..models import Dish
 

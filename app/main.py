@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from .database import create_db_and_tables
-from .routes import menu, submenu, dish
+from .v1.routers import menu, submenu, dish
 
 
 app = FastAPI()

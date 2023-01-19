@@ -26,10 +26,10 @@ class Submenu(SubmenuBase, table=True):
     dishes: list["Dish"] = Relationship(
         back_populates="submenu",
         sa_relationship_kwargs={
-            "cascade": "all, delete",   # Instruct the ORM how to track changes to local objects
+            "cascade": "all, delete",
+            "passive_deletes": True,
         }
     )
-
 
 class SubmenuCreate(SubmenuBase):
     menu_id: UUID | None = None
