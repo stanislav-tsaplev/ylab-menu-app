@@ -35,5 +35,5 @@ class MenuUpdate(MenuBase):
 class MenuRead(MenuBase):
     id: UUID
 
-    submenus_count: int | None = None
-    dishes_count: int | None = None
+    submenus_count: int = 0
+    dishes_count: int = 0

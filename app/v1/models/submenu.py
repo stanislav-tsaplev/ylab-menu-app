@@ -43,4 +43,4 @@ class SubmenuRead(SubmenuBase):
     id: UUID
     menu_id: UUID
 
-    dishes_count: int | None = None
+    dishes_count: int = 0
