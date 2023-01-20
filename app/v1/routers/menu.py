@@ -2,7 +2,10 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
 
-from ..models.menu import MenuCreate, MenuUpdate, MenuRead
+from ..models.menu import (
+    MenuCreate, MenuUpdate, MenuRead,
+    MenuCreated, MenuUpdated
+)
 from .. import crud
 
 
@@ -10,12 +13,12 @@ router = APIRouter()
 
 
 @router.post("/", status_code=201)
-def create_menu(menu: MenuCreate) -> MenuRead:
+def create_menu(menu: MenuCreate) -> MenuCreated:
     return crud.create_menu(menu)
 
 
 @router.patch("/{menu_id}")
-def update_menu(menu_id: UUID, updated_menu: MenuUpdate) -> MenuRead:
+def update_menu(menu_id: UUID, updated_menu: MenuUpdate) -> MenuUpdated:
     menu = crud.update_menu(menu_id, updated_menu)
     if menu is None:
         raise HTTPException(status_code=404, detail="menu not found")

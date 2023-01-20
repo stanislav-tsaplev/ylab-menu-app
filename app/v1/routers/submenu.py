@@ -2,7 +2,10 @@ from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
 
-from ..models.submenu import SubmenuCreate, SubmenuUpdate, SubmenuRead
+from ..models.submenu import (
+    SubmenuCreate, SubmenuUpdate, SubmenuRead,
+    SubmenuCreated, SubmenuUpdated
+)
 from .. import crud
 
 
@@ -10,7 +13,7 @@ router = APIRouter()
 
 
 @router.post("/", status_code=201)
-def create_submenu(menu_id: UUID, submenu: SubmenuCreate) -> SubmenuRead:
+def create_submenu(menu_id: UUID, submenu: SubmenuCreate) -> SubmenuCreated:
     created_submenu = crud.create_submenu(menu_id, submenu)
     if created_submenu is None:
         raise HTTPException(status_code=404, detail="menu not found")
@@ -20,7 +23,7 @@ def create_submenu(menu_id: UUID, submenu: SubmenuCreate) -> SubmenuRead:
 @router.patch("/{submenu_id}")
 def update_submenu(
     menu_id: UUID, submenu_id: UUID, updated_submenu: SubmenuUpdate
-) -> SubmenuRead:
+) -> SubmenuUpdated:
     submenu = crud.update_submenu(submenu_id, updated_submenu)
     if submenu is None:
         raise HTTPException(status_code=404, detail="submenu not found")
