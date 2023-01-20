@@ -7,13 +7,10 @@ if TYPE_CHECKING:
     from .submenu import Submenu
 
 
-class MenuBase(SQLModel):
+class Menu(SQLModel, table=True):
+    id: UUID | None = Field(default_factory=uuid4, primary_key=True)
     title: str
     description: str | None = None
-
-
-class Menu(MenuBase, table=True):
-    id: UUID | None = Field(default_factory=uuid4, primary_key=True)
 
     submenus: list["Submenu"] = Relationship(
         back_populates="menu",
@@ -24,16 +21,32 @@ class Menu(MenuBase, table=True):
     )
 
 
-class MenuCreate(MenuBase):
-    pass
+class MenuCreate(SQLModel):
+    title: str
+    description: str | None = None
 
 
-class MenuUpdate(MenuBase):
-    title: str | None = None
-
-
-class MenuRead(MenuBase):
+class MenuCreated(SQLModel):
     id: UUID
+    title: str
+    description: str | None
+
+
+class MenuUpdate(SQLModel):
+    title: str | None = None
+    description: str | None = None
+
+
+class MenuUpdated(SQLModel):
+    id: UUID
+    title: str
+    description: str | None
+
+
+class MenuRead(SQLModel):
+    id: UUID
+    title: str
+    description: str | None
 
     submenus_count: int = 0
     dishes_count: int = 0
