@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from .database import create_db_and_tables
 from .v1.routers import menu, submenu, dish
+from .endpoints import ROUTE_PREFIXES
 
 
 app = FastAPI()
@@ -9,17 +10,17 @@ app = FastAPI()
 
 app.include_router(
     menu.router,
-    prefix="/api/v1/menus",
+    prefix=ROUTE_PREFIXES["menu"],
     tags=["menu"]
 )
 app.include_router(
     submenu.router,
-    prefix="/api/v1/menus/{menu_id}/submenus",
+    prefix=ROUTE_PREFIXES["submenu"],
     tags=["submenu"]
 )
 app.include_router(
     dish.router,
-    prefix="/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes",
+    prefix=ROUTE_PREFIXES["dish"],
     tags=["dish"]
 )
 
