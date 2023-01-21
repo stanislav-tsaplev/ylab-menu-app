@@ -31,8 +31,12 @@ def update_dish(menu_id: UUID, submenu_id: UUID,
 
 
 @router.delete("/{dish_id}")
-def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> None:
+def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> dict:
     crud.delete_dish(dish_id)
+    return {
+        "status": True, 
+        "message": "The dish has been deleted"
+    }
 
 
 @router.get("/{dish_id}")
