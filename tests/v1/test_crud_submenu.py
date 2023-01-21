@@ -99,7 +99,7 @@ def test_read_submenu_fail(client, existing_menu_id, non_existing_submenu_id):
 
 def test_read_all_submenus(client, existing_menu_id, existing_submenu_id):
     route_url = ROUTE_PREFIXES["submenus"].format(
-        menu_id=existing_menu_id        
+        menu_id=existing_menu_id
     )
     response = client.get(
         url=route_url
