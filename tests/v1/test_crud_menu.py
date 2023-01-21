@@ -1,6 +1,7 @@
 from app.endpoints import ROUTE_PREFIXES
 from .resources.menu import (
-    read_menu_data, creating_menu_data, updating_menu_data,
+    creating_menu_data, updating_menu_data,
+    created_menu_data, updated_menu_data, read_menu_data, 
     deleted_menu_response, not_found_menu_response
 )
 
@@ -16,8 +17,8 @@ def test_create_menu(client):
 
     response_json = response.json()
     assert response_json == {
+        **created_menu_data,
         "id": response_json["id"],
-        **creating_menu_data
     }
 
 
@@ -32,8 +33,8 @@ def test_update_menu_success(client, existing_menu_id):
 
     assert response.status_code == 200
     assert response.json() == {
+        **updated_menu_data,
         "id": existing_menu_id,
-        **updating_menu_data
     }
 
 
@@ -72,8 +73,8 @@ def test_read_menu_success(client, existing_menu_id):
 
     assert response.status_code == 200
     assert response.json() == {
+        **read_menu_data,
         "id": existing_menu_id,
-        **read_menu_data
     }
 
 
@@ -100,7 +101,7 @@ def test_read_all_menus(client, existing_menu_id):
     response_json = response.json()
     assert response_json == [
         {
+            **read_menu_data,
             "id": existing_menu_id,
-            **read_menu_data
         }
     ]
