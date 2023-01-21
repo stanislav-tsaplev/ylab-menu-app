@@ -31,6 +31,9 @@ class MenuCreated(SQLModel):
     title: str
     description: str | None
 
+    submenus_count: int = 0
+    dishes_count: int = 0
+
 
 class MenuUpdate(SQLModel):
     title: str | None = None
@@ -41,6 +44,9 @@ class MenuUpdated(SQLModel):
     id: UUID
     title: str
     description: str | None
+
+    submenus_count: int = 0
+    dishes_count: int = 0
 
 
 class MenuRead(SQLModel):
