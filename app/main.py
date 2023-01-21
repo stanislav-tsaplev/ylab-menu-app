@@ -10,17 +10,17 @@ app = FastAPI()
 
 app.include_router(
     menu.router,
-    prefix=ROUTE_PREFIXES["menu"],
+    prefix=ROUTE_PREFIXES["menus"],
     tags=["menu"]
 )
 app.include_router(
     submenu.router,
-    prefix=ROUTE_PREFIXES["submenu"],
+    prefix=ROUTE_PREFIXES["submenus"],
     tags=["submenu"]
 )
 app.include_router(
     dish.router,
-    prefix=ROUTE_PREFIXES["dish"],
+    prefix=ROUTE_PREFIXES["dishes"],
     tags=["dish"]
 )
 

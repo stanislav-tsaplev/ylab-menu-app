@@ -3,8 +3,8 @@ from fastapi.testclient import TestClient
 from uuid import uuid4
 
 from app.main import app
-from app.v1.crud.utils import truncate_database
-from app.endpoints import ROOT_PATH, ROUTE_PREFIXES
+from app.v1.crud.utils import clear_database
+from app.endpoints import ROUTE_PREFIXES
 from .resources import creating_menu_data
 
 
@@ -15,15 +15,14 @@ BASE_URL = "http://127.0.0.1:8000"
 def client():
     cli = TestClient(
         app, 
-        base_url=BASE_URL,
-        root_path=ROOT_PATH
+        base_url=BASE_URL
     )
     yield cli
 
 
 @pytest.fixture
 def created_menu(client):
-    route_url = ROUTE_PREFIXES["menu"] + "/"
+    route_url = ROUTE_PREFIXES["menus"]
     response = client.post(
         url=route_url,
         json=creating_menu_data
@@ -31,7 +30,7 @@ def created_menu(client):
     assert response.status_code == 201
     
     yield response.json()
-    truncate_database()
+    clear_database()
 
 
 @pytest.fixture()
