@@ -31,8 +31,12 @@ def update_submenu(
 
 
 @router.delete("/{submenu_id}")
-def delete_submenu(menu_id: UUID, submenu_id: UUID) -> None:
+def delete_submenu(menu_id: UUID, submenu_id: UUID) -> dict:
     crud.delete_submenu(submenu_id)
+    return {
+        "status": True, 
+        "message": "The submenu has been deleted"
+    }
 
 
 @router.get("/{submenu_id}")

@@ -38,7 +38,8 @@ class SubmenuCreated(SQLModel):
     id: UUID
     title: str
     description: str | None
-    menu_id: UUID
+
+    dishes_count: int = 0
 
 
 class SubmenuUpdate(SQLModel):
@@ -50,13 +51,13 @@ class SubmenuUpdated(SQLModel):
     id: UUID
     title: str
     description: str | None
-    menu_id: UUID
+
+    dishes_count: int = 0
 
 
 class SubmenuRead(SQLModel):
     id: UUID
     title: str
     description: str | None
-    menu_id: UUID
 
     dishes_count: int = 0
