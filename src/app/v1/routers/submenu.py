@@ -44,13 +44,7 @@ def read_submenu(menu_id: UUID, submenu_id: UUID) -> SubmenuRead:
     submenu = crud.read_submenu(submenu_id)
     if submenu is None:
         raise HTTPException(status_code=404, detail="submenu not found")
-
-    dishes_count = crud.submenu.get_dishes_count(submenu_id)
-
-    return SubmenuRead.construct(
-        dishes_count=dishes_count,
-        **submenu.dict()
-    )
+    return submenu
 
 
 @router.get("/")

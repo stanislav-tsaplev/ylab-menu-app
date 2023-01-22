@@ -39,15 +39,7 @@ def read_menu(menu_id: UUID) -> MenuRead:
     menu = crud.read_menu(menu_id)
     if menu is None:
         raise HTTPException(status_code=404, detail="menu not found")
-
-    submenus_count = crud.menu.get_submenus_count(menu_id)
-    dishes_count = crud.menu.get_total_dishes_count(menu_id)
-
-    return MenuRead.construct(
-        submenus_count=submenus_count,
-        dishes_count=dishes_count,
-        **menu.dict()
-    )
+    return menu
 
 
 @router.get("/", response_model=list[MenuRead])

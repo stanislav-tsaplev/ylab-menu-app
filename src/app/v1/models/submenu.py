@@ -1,11 +1,16 @@
 from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
-from sqlmodel import SQLModel, Field, Relationship, ForeignKeyConstraint
+from sqlmodel import (
+    SQLModel, 
+    Field, Relationship, ForeignKeyConstraint, 
+    select, func
+)
+from sqlalchemy.orm import column_property
 
 if TYPE_CHECKING:
     from .menu import Menu
-    from .dish import Dish
+from .dish import Dish
 
 
 class Submenu(SQLModel, table=True):
@@ -27,6 +32,14 @@ class Submenu(SQLModel, table=True):
             "passive_deletes": True,
         }
     )
+
+Submenu.dishes_count = column_property(
+    select(func.count(Dish.id))
+    .where(Submenu.id == Dish.submenu_id)
+    .correlate_except(Dish)
+    .scalar_subquery()
+)
+
 
 class SubmenuCreate(SQLModel):
     title: str

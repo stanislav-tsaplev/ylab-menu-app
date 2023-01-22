@@ -71,24 +71,3 @@ def read_all_menus() -> list[Menu]:
         ).all()
 
         return db_menus
-
-
-def get_submenus_count(menu_id: UUID) -> int:
-    with Session(engine) as session:
-        submenus_count = session.exec(
-            select(func.count(Submenu.id))
-            .where(Submenu.menu_id == menu_id)
-        ).one()
-
-        return submenus_count
-
-
-def get_total_dishes_count(menu_id: UUID) -> int:
-    with Session(engine) as session:
-        dishes_count = session.exec(
-            select(func.count(Dish.id))
-            .join(Submenu)
-            .where(Dish.submenu_id == Submenu.id and Submenu.menu_id == menu_id)
-        ).one()
-
-        return dishes_count
