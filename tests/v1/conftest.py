@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from app.main import app
 from app.v1.crud.utils import clear_database
-from app.endpoints import ROUTE_PREFIXES
+from app.v1.endpoints import ENDPOINTS
 from .resources import (
     creating_menu_data, creating_submenu_data, creating_dish_data
 )
@@ -19,12 +19,13 @@ def client():
         app, 
         base_url=BASE_URL
     )
+
     yield cli
 
 
 @pytest.fixture
 def created_menu(client):
-    route_url = ROUTE_PREFIXES["menus"]
+    route_url = ENDPOINTS["menus"]
     response = client.post(
         url=route_url,
         json=creating_menu_data
@@ -37,7 +38,7 @@ def created_menu(client):
 
 @pytest.fixture
 def created_submenu(client, created_menu):
-    route_url = ROUTE_PREFIXES["submenus"].format(
+    route_url = ENDPOINTS["submenus"].format(
         menu_id=created_menu["id"]
     )
     response = client.post(
@@ -54,7 +55,7 @@ def created_submenu(client, created_menu):
 
 @pytest.fixture
 def created_dish(client, created_submenu):
-    route_url = ROUTE_PREFIXES["dishes"].format(
+    route_url = ENDPOINTS["dishes"].format(
         menu_id=created_submenu["menu_id"],
         submenu_id=created_submenu["id"]
     )
