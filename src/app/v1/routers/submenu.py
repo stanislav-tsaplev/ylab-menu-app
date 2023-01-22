@@ -6,6 +6,7 @@ from ..models.submenu import (
     SubmenuCreate, SubmenuUpdate, SubmenuRead,
     SubmenuCreated, SubmenuUpdated
 )
+from ..models.common import ResultInfo
 from .. import crud
 
 
@@ -31,12 +32,12 @@ def update_submenu(
 
 
 @router.delete("/{submenu_id}")
-def delete_submenu(menu_id: UUID, submenu_id: UUID) -> dict:
+def delete_submenu(menu_id: UUID, submenu_id: UUID) -> ResultInfo:
     crud.delete_submenu(submenu_id)
-    return {
-        "status": True, 
-        "message": "The submenu has been deleted"
-    }
+    return ResultInfo(
+        status=True, 
+        message="The submenu has been deleted"
+    )
 
 
 @router.get("/{submenu_id}")

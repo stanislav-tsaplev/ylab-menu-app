@@ -7,6 +7,7 @@ from ..models.dish import (
     DishCreate, DishUpdate, DishRead,
     DishCreated, DishUpdated
 )
+from ..models.common import ResultInfo
 from .. import crud
 
 
@@ -31,12 +32,12 @@ def update_dish(menu_id: UUID, submenu_id: UUID,
 
 
 @router.delete("/{dish_id}")
-def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> dict:
+def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> ResultInfo:
     crud.delete_dish(dish_id)
-    return {
-        "status": True, 
-        "message": "The dish has been deleted"
-    }
+    return ResultInfo(
+        status=True, 
+        message="The dish has been deleted"
+    )
 
 
 @router.get("/{dish_id}")

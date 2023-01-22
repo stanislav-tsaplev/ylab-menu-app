@@ -6,6 +6,7 @@ from ..models.menu import (
     MenuCreate, MenuUpdate, MenuRead,
     MenuCreated, MenuUpdated
 )
+from ..models.common import ResultInfo
 from .. import crud
 
 
@@ -26,12 +27,12 @@ def update_menu(menu_id: UUID, updated_menu: MenuUpdate) -> MenuUpdated:
 
 
 @router.delete("/{menu_id}")
-def delete_menu(menu_id: UUID) -> dict:
+def delete_menu(menu_id: UUID) -> ResultInfo:
     crud.delete_menu(menu_id)
-    return {
-        "status": True, 
-        "message": "The menu has been deleted"
-    }
+    return ResultInfo(
+        status=True, 
+        message="The menu has been deleted"
+    )
 
 
 @router.get("/{menu_id}")
