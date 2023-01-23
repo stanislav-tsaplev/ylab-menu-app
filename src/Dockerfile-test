@@ -8,6 +8,5 @@ COPY requirements-dev.txt ./
 RUN pip install --no-cache-dir --upgrade -r ./requirements-dev.txt
 
 COPY .docker-test.env ./.env
-COPY migrations/ ./migrations
 COPY app/ ./app
 COPY tests/ ./tests

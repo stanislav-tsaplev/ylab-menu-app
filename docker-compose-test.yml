@@ -16,7 +16,7 @@ services:
       context: ./src
       dockerfile: Dockerfile-test
     command: |
-      bash -c 'alembic upgrade head && pytest -v'
+      bash -c 'pytest -v'
     volumes:
       - app-test:/src
     ports:

@@ -1,9 +1,11 @@
 import pytest
-from fastapi.testclient import TestClient
 from uuid import uuid4
 
+from fastapi.testclient import TestClient
+from sqlmodel import SQLModel
+
 from app.main import app
-from app.v1.crud.utils import clear_database
+from app.database import engine
 from app.v1.endpoints import ENDPOINTS
 from .resources import (
     creating_menu_data, creating_submenu_data, creating_dish_data
@@ -11,6 +13,12 @@ from .resources import (
 
 
 BASE_URL = "http://127.0.0.1:8000"
+
+
+@pytest.fixture(autouse=True)
+def reset_database():
+    SQLModel.metadata.drop_all(engine)
+    SQLModel.metadata.create_all(engine)
 
 
 @pytest.fixture(scope="session")
@@ -31,9 +39,8 @@ def created_menu(client):
         json=creating_menu_data
     )
     assert response.status_code == 201
-    
+
     yield response.json()
-    clear_database()
 
 
 @pytest.fixture
