@@ -11,12 +11,12 @@ services:
       - .docker-test.env
     networks:
       - default
-  web:
+  api:
     build: 
       context: ./src
       dockerfile: Dockerfile-test
     command: |
-      bash -c 'alembic upgrade head && pytest'
+      bash -c 'alembic upgrade head && pytest -v'
     volumes:
       - app-test:/src
     ports:

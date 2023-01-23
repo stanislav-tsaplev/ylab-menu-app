@@ -16,7 +16,6 @@ def test_create_menu(client):
     assert response.status_code == 201
 
     response_json = response.json()
-    print(f"{response_json=}")
     assert response_json == {
         **created_menu_data,
         "id": response_json["id"],
