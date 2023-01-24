@@ -11,6 +11,12 @@ services:
       - .docker.env
     networks:
       - default
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${DB_NAME} -U $${DB_USER}"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
   api:
     build: ./src
     command: |
@@ -24,7 +30,8 @@ services:
     networks:
       - default
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
   pgdata:
