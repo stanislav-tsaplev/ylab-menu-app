@@ -9,12 +9,16 @@ from ..models.dish import (
 )
 from ..models.common import ResultInfo
 from .. import crud
+from .helpers import http_exception_response
 
 
 router = APIRouter()
 
 
-@router.post("/", status_code=201)
+@router.post("/", 
+    status_code=201,
+    responses=http_exception_response(status_code=404, detail="submenu not found")
+)
 def create_dish(menu_id: UUID, submenu_id: UUID, dish: DishCreate) -> DishCreated:
     created_dish = crud.create_dish(submenu_id, dish)
     if created_dish is None:
@@ -22,7 +26,9 @@ def create_dish(menu_id: UUID, submenu_id: UUID, dish: DishCreate) -> DishCreate
     return created_dish
 
 
-@router.patch("/{dish_id}")
+@router.patch("/{dish_id}", 
+    responses=http_exception_response(status_code=404, detail="dish not found")
+)
 def update_dish(menu_id: UUID, submenu_id: UUID,
                 dish_id: UUID, updated_dish: DishUpdate) -> DishUpdated:
     dish = crud.update_dish(dish_id, updated_dish)
@@ -40,7 +46,9 @@ def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> ResultInfo:
     )
 
 
-@router.get("/{dish_id}")
+@router.get("/{dish_id}",    
+    responses=http_exception_response(status_code=404, detail="dish not found")
+)
 def read_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> DishRead:
     dish = crud.read_dish(dish_id)
     if dish is None:

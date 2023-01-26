@@ -8,12 +8,16 @@ from ..models.submenu import (
 )
 from ..models.common import ResultInfo
 from .. import crud
+from .helpers import http_exception_response
 
 
 router = APIRouter()
 
 
-@router.post("/", status_code=201)
+@router.post("/", 
+    status_code=201, 
+    responses=http_exception_response(status_code=404, detail="menu not found")
+)
 def create_submenu(menu_id: UUID, submenu: SubmenuCreate) -> SubmenuCreated:
     created_submenu = crud.create_submenu(menu_id, submenu)
     if created_submenu is None:
@@ -21,7 +25,9 @@ def create_submenu(menu_id: UUID, submenu: SubmenuCreate) -> SubmenuCreated:
     return created_submenu
 
 
-@router.patch("/{submenu_id}")
+@router.patch("/{submenu_id}", 
+    responses=http_exception_response(status_code=404, detail="submenu not found")
+)
 def update_submenu(
     menu_id: UUID, submenu_id: UUID, updated_submenu: SubmenuUpdate
 ) -> SubmenuUpdated:
@@ -40,7 +46,9 @@ def delete_submenu(menu_id: UUID, submenu_id: UUID) -> ResultInfo:
     )
 
 
-@router.get("/{submenu_id}")
+@router.get("/{submenu_id}", 
+    responses=http_exception_response(status_code=404, detail="submenu not found")
+)
 def read_submenu(menu_id: UUID, submenu_id: UUID) -> SubmenuRead:
     submenu = crud.read_submenu(submenu_id)
     if submenu is None:
