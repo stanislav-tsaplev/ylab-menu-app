@@ -6,7 +6,7 @@ from sqlmodel import SQLModel
 
 from app.main import app
 from app.database import engine
-from app.v1.endpoints import ENDPOINTS
+from app.v1.routes import ROUTES
 from .resources import (
     creating_menu_data, creating_submenu_data, creating_dish_data
 )
@@ -33,7 +33,7 @@ def client():
 
 @pytest.fixture
 def created_menu(client):
-    route_url = ENDPOINTS["menus"]
+    route_url = ROUTES["menus"]
     response = client.post(
         url=route_url,
         json=creating_menu_data
@@ -45,7 +45,7 @@ def created_menu(client):
 
 @pytest.fixture
 def created_submenu(client, created_menu):
-    route_url = ENDPOINTS["submenus"].format(
+    route_url = ROUTES["submenus"].format(
         menu_id=created_menu["id"]
     )
     response = client.post(
@@ -62,7 +62,7 @@ def created_submenu(client, created_menu):
 
 @pytest.fixture
 def created_dish(client, created_submenu):
-    route_url = ENDPOINTS["dishes"].format(
+    route_url = ROUTES["dishes"].format(
         menu_id=created_submenu["menu_id"],
         submenu_id=created_submenu["id"]
     )

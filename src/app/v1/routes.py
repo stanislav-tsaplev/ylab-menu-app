@@ -1,6 +1,6 @@
 ROOT_PATH = "/api/v1"
 
-ENDPOINTS = {
+ROUTES = {
     "menus": ROOT_PATH + "/menus",
     "menu": ROOT_PATH + "/menus/{menu_id}",
     "submenus": ROOT_PATH + "/menus/{menu_id}/submenus",

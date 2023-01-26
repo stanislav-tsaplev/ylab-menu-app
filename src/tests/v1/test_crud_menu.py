@@ -1,4 +1,4 @@
-from app.v1.endpoints import ENDPOINTS
+from app.v1.routes import ROUTES
 from .resources.menu import (
     creating_menu_data, updating_menu_data,
     created_menu_data, updated_menu_data, read_menu_data, 
@@ -7,7 +7,7 @@ from .resources.menu import (
 
 
 def test_create_menu(client):
-    route_url = ENDPOINTS["menus"]
+    route_url = ROUTES["menus"]
     response = client.post(
         url=route_url, 
         json=creating_menu_data
@@ -23,7 +23,7 @@ def test_create_menu(client):
 
 
 def test_update_menu_success(client, existing_menu_id):
-    route_url = ENDPOINTS["menu"].format(
+    route_url = ROUTES["menu"].format(
         menu_id=existing_menu_id
     )
     response = client.patch(
@@ -39,7 +39,7 @@ def test_update_menu_success(client, existing_menu_id):
 
 
 def test_update_menu_fail(client, non_existing_menu_id):
-    route_url = ENDPOINTS["menu"].format(
+    route_url = ROUTES["menu"].format(
         menu_id=non_existing_menu_id
     )
     response = client.patch(
@@ -52,7 +52,7 @@ def test_update_menu_fail(client, non_existing_menu_id):
 
 
 def test_delete_menu(client, existing_menu_id):
-    route_url = ENDPOINTS["menu"].format(
+    route_url = ROUTES["menu"].format(
         menu_id=existing_menu_id
     )
     response = client.delete(
@@ -64,7 +64,7 @@ def test_delete_menu(client, existing_menu_id):
 
 
 def test_read_menu_success(client, existing_menu_id):
-    route_url = ENDPOINTS["menu"].format(
+    route_url = ROUTES["menu"].format(
         menu_id=existing_menu_id
     )
     response = client.get(
@@ -79,7 +79,7 @@ def test_read_menu_success(client, existing_menu_id):
 
 
 def test_read_menu_fail(client, non_existing_menu_id):
-    route_url = ENDPOINTS["menu"].format(
+    route_url = ROUTES["menu"].format(
         menu_id=non_existing_menu_id
     )
     response = client.get(
@@ -91,7 +91,7 @@ def test_read_menu_fail(client, non_existing_menu_id):
 
 
 def test_read_all_menus(client, existing_menu_id):
-    route_url = ENDPOINTS["menus"]
+    route_url = ROUTES["menus"]
     response = client.get(
         url=route_url
     )
