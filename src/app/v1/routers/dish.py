@@ -11,9 +11,11 @@ from ..models.dish import (
     DishUpdate,
     DishUpdated,
 )
+from ..routes import ROUTES
 from .helpers import http_exception_response
 
-router = APIRouter()
+
+router = APIRouter(prefix=ROUTES["dishes"])
 
 
 @router.post(

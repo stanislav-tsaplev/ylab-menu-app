@@ -11,9 +11,11 @@ from ..models.menu import (
     MenuUpdate,
     MenuUpdated,
 )
+from ..routes import ROUTES
 from .helpers import http_exception_response
 
-router = APIRouter()
+
+router = APIRouter(prefix=ROUTES["menus"])
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
