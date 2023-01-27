@@ -1,16 +1,18 @@
-import pytest
 from uuid import uuid4
 
+import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import SQLModel
 
-from app.main import app
 from app.database import engine
+from app.main import app
 from app.v1.routes import ROUTES
-from .resources import (
-    creating_menu_data, creating_submenu_data, creating_dish_data
-)
 
+from .resources import (
+    creating_dish_data,
+    creating_menu_data,
+    creating_submenu_data,
+)
 
 BASE_URL = "http://127.0.0.1:8000"
 
@@ -23,10 +25,7 @@ def reset_database():
 
 @pytest.fixture(scope="session")
 def client():
-    cli = TestClient(
-        app, 
-        base_url=BASE_URL
-    )
+    cli = TestClient(app, base_url=BASE_URL)
 
     yield cli
 
@@ -34,10 +33,7 @@ def client():
 @pytest.fixture
 def created_menu(client):
     route_url = ROUTES["menus"]
-    response = client.post(
-        url=route_url,
-        json=creating_menu_data
-    )
+    response = client.post(url=route_url, json=creating_menu_data)
     assert response.status_code == 201
 
     yield response.json()
@@ -45,33 +41,21 @@ def created_menu(client):
 
 @pytest.fixture
 def created_submenu(client, created_menu):
-    route_url = ROUTES["submenus"].format(
-        menu_id=created_menu["id"]
-    )
-    response = client.post(
-        url=route_url,
-        json=creating_submenu_data
-    )
+    route_url = ROUTES["submenus"].format(menu_id=created_menu["id"])
+    response = client.post(url=route_url, json=creating_submenu_data)
     assert response.status_code == 201
-    
-    yield {
-        **response.json(),
-        "menu_id": created_menu["id"]
-    }
+
+    yield {**response.json(), "menu_id": created_menu["id"]}
 
 
 @pytest.fixture
 def created_dish(client, created_submenu):
     route_url = ROUTES["dishes"].format(
-        menu_id=created_submenu["menu_id"],
-        submenu_id=created_submenu["id"]
+        menu_id=created_submenu["menu_id"], submenu_id=created_submenu["id"]
     )
-    response = client.post(
-        url=route_url,
-        json=creating_dish_data
-    )
+    response = client.post(url=route_url, json=creating_dish_data)
     assert response.status_code == 201
-    
+
     yield response.json()
 
 

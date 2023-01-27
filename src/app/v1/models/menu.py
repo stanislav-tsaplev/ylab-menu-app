@@ -1,10 +1,10 @@
 from uuid import UUID, uuid4
 
-from sqlmodel import SQLModel, Field, Relationship, select, func
 from sqlalchemy.orm import column_property
+from sqlmodel import Field, Relationship, SQLModel, func, select
 
-from .submenu import Submenu
 from .dish import Dish
+from .submenu import Submenu
 
 
 class Menu(SQLModel, table=True):
@@ -17,8 +17,9 @@ class Menu(SQLModel, table=True):
         sa_relationship_kwargs={
             "cascade": "all, delete",
             "passive_deletes": True,
-        }
+        },
     )
+
 
 Menu.submenus_count = column_property(
     select(func.count(Submenu.id))

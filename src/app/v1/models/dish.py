@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
-from sqlmodel import SQLModel, Field, Relationship, ForeignKeyConstraint
 from pydantic import condecimal
+from sqlmodel import Field, ForeignKeyConstraint, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from .submenu import Submenu
@@ -10,7 +10,9 @@ if TYPE_CHECKING:
 
 class Dish(SQLModel, table=True):
     __table_args__ = (
-        ForeignKeyConstraint(["submenu_id"], ["submenu.id"], ondelete="CASCADE"),
+        ForeignKeyConstraint(
+            ["submenu_id"], ["submenu.id"], ondelete="CASCADE"
+        ),
     )
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)
