@@ -1,10 +1,9 @@
 from uuid import UUID
 
-from sqlmodel import Session, select, update, delete, func
+from sqlmodel import Session, delete, select, update
 
 from ...database import engine
 from ..models.menu import Menu, MenuCreate, MenuUpdate
-from ..models import Submenu, Dish
 
 
 def create_menu(menu: MenuCreate) -> Menu:
@@ -21,8 +20,7 @@ def create_menu(menu: MenuCreate) -> Menu:
 def update_menu(menu_id: UUID, updated_menu: MenuUpdate) -> Menu | None:
     with Session(engine) as session:
         db_menu = session.exec(
-            select(Menu)
-            .where(Menu.id == menu_id)
+            select(Menu).where(Menu.id == menu_id)
         ).one_or_none()
 
         if db_menu is None:
@@ -31,12 +29,7 @@ def update_menu(menu_id: UUID, updated_menu: MenuUpdate) -> Menu | None:
         session.exec(
             update(Menu)
             .where(Menu.id == menu_id)
-            .values(
-                **updated_menu.dict(
-                    exclude={'id'},
-                    exclude_unset=True
-                )
-            )
+            .values(**updated_menu.dict(exclude={"id"}, exclude_unset=True))
         )
 
         session.commit()
@@ -47,10 +40,7 @@ def update_menu(menu_id: UUID, updated_menu: MenuUpdate) -> Menu | None:
 
 def delete_menu(menu_id: UUID) -> None:
     with Session(engine) as session:
-        session.exec(
-            delete(Menu)
-            .where(Menu.id == menu_id)
-        )
+        session.exec(delete(Menu).where(Menu.id == menu_id))
 
         session.commit()
 
@@ -66,8 +56,6 @@ def read_menu(menu_id: UUID) -> Menu | None:
 
 def read_all_menus() -> list[Menu]:
     with Session(engine) as session:
-        db_menus = session.exec(
-            select(Menu)
-        ).all()
+        db_menus = session.exec(select(Menu)).all()
 
         return db_menus

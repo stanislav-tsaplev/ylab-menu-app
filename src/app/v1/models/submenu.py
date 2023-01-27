@@ -1,15 +1,19 @@
 from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
-from sqlmodel import (
-    SQLModel, 
-    Field, Relationship, ForeignKeyConstraint, 
-    select, func
-)
 from sqlalchemy.orm import column_property
+from sqlmodel import (
+    Field,
+    ForeignKeyConstraint,
+    Relationship,
+    SQLModel,
+    func,
+    select,
+)
 
 if TYPE_CHECKING:
     from .menu import Menu
+
 from .dish import Dish
 
 
@@ -30,8 +34,9 @@ class Submenu(SQLModel, table=True):
         sa_relationship_kwargs={
             "cascade": "all, delete",
             "passive_deletes": True,
-        }
+        },
     )
+
 
 Submenu.dishes_count = column_property(
     select(func.count(Dish.id))

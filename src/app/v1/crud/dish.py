@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from sqlmodel import Session, select, update, delete
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session, delete, select, update
 
 from ...database import engine
 from ..models.dish import Dish, DishCreate, DishUpdate
@@ -15,7 +15,7 @@ def create_dish(submenu_id: UUID, dish: DishCreate) -> Dish | None:
             session.add(db_dish)
 
             session.commit()
-        except IntegrityError as e:
+        except IntegrityError:
             return None
 
         session.refresh(db_dish)
@@ -25,8 +25,7 @@ def create_dish(submenu_id: UUID, dish: DishCreate) -> Dish | None:
 def update_dish(dish_id: UUID, updated_dish: DishUpdate) -> Dish | None:
     with Session(engine) as session:
         db_dish = session.exec(
-            select(Dish)
-            .where(Dish.id == dish_id)
+            select(Dish).where(Dish.id == dish_id)
         ).one_or_none()
 
         if db_dish is None:
@@ -35,12 +34,7 @@ def update_dish(dish_id: UUID, updated_dish: DishUpdate) -> Dish | None:
         session.exec(
             update(Dish)
             .where(Dish.id == dish_id)
-            .values(
-                **updated_dish.dict(
-                    exclude={'id'},
-                    exclude_unset=True
-                )
-            )
+            .values(**updated_dish.dict(exclude={"id"}, exclude_unset=True))
         )
 
         session.commit()
@@ -51,10 +45,7 @@ def update_dish(dish_id: UUID, updated_dish: DishUpdate) -> Dish | None:
 
 def delete_dish(dish_id: UUID) -> None:
     with Session(engine) as session:
-        session.exec(
-            delete(Dish)
-            .where(Dish.id == dish_id)
-        )
+        session.exec(delete(Dish).where(Dish.id == dish_id))
 
         session.commit()
 
@@ -71,8 +62,7 @@ def read_dish(dish_id: UUID) -> Dish | None:
 def read_all_dishes(submenu_id: UUID) -> list[Dish]:
     with Session(engine) as session:
         db_dishes = session.exec(
-            select(Dish)
-            .where(Dish.submenu_id == submenu_id)
+            select(Dish).where(Dish.submenu_id == submenu_id)
         ).all()
 
         return db_dishes

@@ -1,11 +1,10 @@
 from uuid import UUID
 
-from sqlmodel import Session, select, update, delete, func
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session, delete, select, update
 
 from ...database import engine
 from ..models.submenu import Submenu, SubmenuCreate, SubmenuUpdate
-from ..models import Dish
 
 
 def create_submenu(menu_id: UUID, submenu: SubmenuCreate) -> Submenu | None:
@@ -16,18 +15,19 @@ def create_submenu(menu_id: UUID, submenu: SubmenuCreate) -> Submenu | None:
             session.add(db_submenu)
 
             session.commit()
-        except IntegrityError as e:
+        except IntegrityError:
             return None
 
         session.refresh(db_submenu)
         return db_submenu
 
 
-def update_submenu(submenu_id: UUID, updated_submenu: SubmenuUpdate) -> Submenu | None:
+def update_submenu(
+    submenu_id: UUID, updated_submenu: SubmenuUpdate
+) -> Submenu | None:
     with Session(engine) as session:
         db_submenu = session.exec(
-            select(Submenu)
-            .where(Submenu.id == submenu_id)
+            select(Submenu).where(Submenu.id == submenu_id)
         ).one_or_none()
 
         if db_submenu is None:
@@ -36,12 +36,7 @@ def update_submenu(submenu_id: UUID, updated_submenu: SubmenuUpdate) -> Submenu 
         session.exec(
             update(Submenu)
             .where(Submenu.id == submenu_id)
-            .values(
-                **updated_submenu.dict(
-                    exclude={'id'},
-                    exclude_unset=True
-                )
-            )
+            .values(**updated_submenu.dict(exclude={"id"}, exclude_unset=True))
         )
 
         session.commit()
@@ -52,10 +47,7 @@ def update_submenu(submenu_id: UUID, updated_submenu: SubmenuUpdate) -> Submenu 
 
 def delete_submenu(submenu_id: UUID) -> None:
     with Session(engine) as session:
-        session.exec(
-            delete(Submenu)
-            .where(Submenu.id == submenu_id)
-        )
+        session.exec(delete(Submenu).where(Submenu.id == submenu_id))
 
         session.commit()
 
@@ -72,8 +64,7 @@ def read_submenu(submenu_id: UUID) -> Submenu | None:
 def read_all_submenus(menu_id: UUID) -> list[Submenu]:
     with Session(engine) as session:
         db_submenus = session.exec(
-            select(Submenu)
-            .where(Submenu.menu_id == menu_id)
+            select(Submenu).where(Submenu.menu_id == menu_id)
         ).all()
 
         return db_submenus

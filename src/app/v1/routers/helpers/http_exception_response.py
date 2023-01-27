@@ -17,10 +17,6 @@ def http_exception_response(
         status_code: {
             "description": HTTPStatus(status_code).phrase,
             "model": HTTPExceptionResponse,
-            "content": {
-                "application/json": {
-                    "example": {"detail": detail}
-                }
-            },
+            "content": {"application/json": {"example": {"detail": detail}}},
         }
     }

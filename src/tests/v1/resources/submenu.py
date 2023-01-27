@@ -31,9 +31,7 @@ updated_submenu_data = {
 
 deleted_submenu_response = {
     "status": True,
-    "message": "The submenu has been deleted"
+    "message": "The submenu has been deleted",
 }
 
-not_found_submenu_response = {
-    "detail": "submenu not found"
-}
+not_found_submenu_response = {"detail": "submenu not found"}

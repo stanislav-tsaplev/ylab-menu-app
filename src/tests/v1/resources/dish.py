@@ -33,9 +33,7 @@ updated_dish_data = {
 
 deleted_dish_response = {
     "status": True,
-    "message": "The dish has been deleted"
+    "message": "The dish has been deleted",
 }
 
-not_found_dish_response = {
-    "detail": "dish not found"
-}
+not_found_dish_response = {"detail": "dish not found"}

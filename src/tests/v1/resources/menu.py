@@ -1,6 +1,6 @@
 creating_menu_data = {
     "title": "My menu 1",
-    "description": "My menu description 1"
+    "description": "My menu description 1",
 }
 
 created_menu_data = {
@@ -34,9 +34,7 @@ updated_menu_data = {
 
 deleted_menu_response = {
     "status": True,
-    "message": "The menu has been deleted"
+    "message": "The menu has been deleted",
 }
 
-not_found_menu_response = {
-    "detail": "menu not found"
-}
+not_found_menu_response = {"detail": "menu not found"}
