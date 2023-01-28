@@ -1,10 +1,6 @@
 from os import environ as env
 
 from sqlmodel import SQLModel, create_engine
-from dotenv import load_dotenv
-
-
-load_dotenv()
 
 
 DB_USER = env["DB_USER"]

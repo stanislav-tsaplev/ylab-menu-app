@@ -1,70 +1,57 @@
 from uuid import UUID
 
-from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session, delete, select, update
+from .. import db, cache
+from ..models.submenu import (
+    SubmenuCreate,
+    SubmenuCreated,
+    SubmenuRead,
+    SubmenuUpdate,
+    SubmenuUpdated,
+)
 
-from ...database import engine
-from ..models.submenu import Submenu, SubmenuCreate, SubmenuUpdate
 
+def create_submenu(
+    menu_id: UUID, submenu_creating_data: SubmenuCreate
+) -> SubmenuCreated | None:
+    db_submenu = db.create_submenu(menu_id, submenu_creating_data)
+    # cache.put_submenu(db_submenu)
 
-def create_submenu(menu_id: UUID, submenu: SubmenuCreate) -> Submenu | None:
-    with Session(engine) as session:
-        try:
-            submenu.menu_id = menu_id
-            db_submenu = Submenu.from_orm(submenu)
-            session.add(db_submenu)
-
-            session.commit()
-        except IntegrityError:
-            return None
-
-        session.refresh(db_submenu)
-        return db_submenu
+    return db_submenu
 
 
 def update_submenu(
-    submenu_id: UUID, updated_submenu: SubmenuUpdate
-) -> Submenu | None:
-    with Session(engine) as session:
-        db_submenu = session.exec(
-            select(Submenu).where(Submenu.id == submenu_id)
-        ).one_or_none()
+    submenu_id: UUID, submenu_updating_data: SubmenuUpdate
+) -> SubmenuUpdated | None:
+    db_submenu = db.update_submenu(submenu_id, submenu_updating_data)
+    if db_submenu is None:
+        return None
 
-        if db_submenu is None:
-            return None
+    cache.delete_submenu(submenu_id)
+    # cache.put_submenu(db_submenu)
 
-        session.exec(
-            update(Submenu)
-            .where(Submenu.id == submenu_id)
-            .values(**updated_submenu.dict(exclude={"id"}, exclude_unset=True))
-        )
+    return db_submenu
 
-        session.commit()
-        session.refresh(db_submenu)
 
+def delete_submenu(menu_id: UUID, submenu_id: UUID) -> None:
+    db.delete_submenu(submenu_id)
+
+    cache.delete_menu(menu_id)
+    cache.delete_submenu(submenu_id)
+    cache.delete_all_dishes()
+
+
+def read_submenu(submenu_id: UUID) -> SubmenuRead | None:
+    cached_submenu = cache.get_submenu(submenu_id)
+    if cached_submenu is not None:
+        return cached_submenu
+
+    db_submenu = db.read_submenu(submenu_id)
+    if db_submenu is not None:
+        cache.put_submenu(db_submenu)
         return db_submenu
 
-
-def delete_submenu(submenu_id: UUID) -> None:
-    with Session(engine) as session:
-        session.exec(delete(Submenu).where(Submenu.id == submenu_id))
-
-        session.commit()
+    return None
 
 
-def read_submenu(submenu_id: UUID) -> Submenu | None:
-    with Session(engine) as session:
-        db_submenu = session.get(Submenu, submenu_id)
-        if db_submenu is None:
-            return None
-
-        return db_submenu
-
-
-def read_all_submenus(menu_id: UUID) -> list[Submenu]:
-    with Session(engine) as session:
-        db_submenus = session.exec(
-            select(Submenu).where(Submenu.menu_id == menu_id)
-        ).all()
-
-        return db_submenus
+def read_all_submenus(menu_id: UUID) -> list[SubmenuRead]:
+    return db.read_all_submenus(menu_id)

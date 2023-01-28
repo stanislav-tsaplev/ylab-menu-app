@@ -25,8 +25,10 @@ router = APIRouter(prefix=ROUTES["submenus"])
         status_code=status.HTTP_404_NOT_FOUND, detail="menu not found"
     ),
 )
-def create_submenu(menu_id: UUID, submenu: SubmenuCreate) -> SubmenuCreated:
-    created_submenu = crud.create_submenu(menu_id, submenu)
+def create_submenu(
+    menu_id: UUID, submenu_creating_data: SubmenuCreate
+) -> SubmenuCreated:
+    created_submenu = crud.create_submenu(menu_id, submenu_creating_data)
     if created_submenu is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="menu not found"
@@ -41,19 +43,19 @@ def create_submenu(menu_id: UUID, submenu: SubmenuCreate) -> SubmenuCreated:
     ),
 )
 def update_submenu(
-    menu_id: UUID, submenu_id: UUID, updated_submenu: SubmenuUpdate
+    menu_id: UUID, submenu_id: UUID, submenu_updating_data: SubmenuUpdate
 ) -> SubmenuUpdated:
-    submenu = crud.update_submenu(submenu_id, updated_submenu)
-    if submenu is None:
+    updated_submenu = crud.update_submenu(submenu_id, submenu_updating_data)
+    if updated_submenu is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="submenu not found"
         )
-    return submenu
+    return updated_submenu
 
 
 @router.delete("/{submenu_id}")
 def delete_submenu(menu_id: UUID, submenu_id: UUID) -> ResultInfo:
-    crud.delete_submenu(submenu_id)
+    crud.delete_submenu(menu_id, submenu_id)
     return ResultInfo(status=True, message="The submenu has been deleted")
 
 

@@ -19,8 +19,9 @@ router = APIRouter(prefix=ROUTES["menus"])
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-def create_menu(menu: MenuCreate) -> MenuCreated:
-    return crud.create_menu(menu)
+def create_menu(menu_creating_data: MenuCreate) -> MenuCreated:
+    created_menu = crud.create_menu(menu_creating_data)
+    return created_menu
 
 
 @router.patch(
@@ -29,13 +30,13 @@ def create_menu(menu: MenuCreate) -> MenuCreated:
         status_code=status.HTTP_404_NOT_FOUND, detail="menu not found"
     ),
 )
-def update_menu(menu_id: UUID, updated_menu: MenuUpdate) -> MenuUpdated:
-    menu = crud.update_menu(menu_id, updated_menu)
-    if menu is None:
+def update_menu(menu_id: UUID, menu_updating_data: MenuUpdate) -> MenuUpdated:
+    updated_menu = crud.update_menu(menu_id, menu_updating_data)
+    if updated_menu is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="menu not found"
         )
-    return menu
+    return updated_menu
 
 
 @router.delete("/{menu_id}")
