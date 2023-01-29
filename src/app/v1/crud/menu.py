@@ -32,10 +32,7 @@ def update_menu(
 
 def delete_menu(menu_id: UUID) -> None:
     db.delete_menu(menu_id)
-
-    cache.delete_menu(menu_id)
-    cache.delete_all_submenus()
-    cache.delete_all_dishes()
+    cache.delete_menu(menu_id, cascade=True)
 
 
 def read_menu(menu_id: UUID) -> MenuRead | None:

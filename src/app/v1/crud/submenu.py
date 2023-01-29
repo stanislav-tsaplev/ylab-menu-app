@@ -26,7 +26,7 @@ def update_submenu(
     if db_submenu is None:
         return None
 
-    cache.delete_submenu(submenu_id)
+    cache.delete_submenu(db_submenu.menu_id, submenu_id)
     # cache.put_submenu(db_submenu)
 
     return db_submenu
@@ -36,8 +36,7 @@ def delete_submenu(menu_id: UUID, submenu_id: UUID) -> None:
     db.delete_submenu(submenu_id)
 
     cache.delete_menu(menu_id)
-    cache.delete_submenu(submenu_id)
-    cache.delete_all_dishes()
+    cache.delete_submenu(menu_id, submenu_id, cascade=True)
 
 
 def read_submenu(submenu_id: UUID) -> SubmenuRead | None:

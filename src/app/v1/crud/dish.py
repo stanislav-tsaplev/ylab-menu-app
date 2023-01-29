@@ -26,7 +26,7 @@ def update_dish(
     if db_dish is None:
         return None
 
-    cache.delete_dish(dish_id)
+    cache.delete_dish(db_dish.submenu_id, dish_id)
     # cache.put_dish(db_dish)
 
     return db_dish
@@ -36,8 +36,8 @@ def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> None:
     db.delete_dish(dish_id)
 
     cache.delete_menu(menu_id)
-    cache.delete_submenu(submenu_id)
-    cache.delete_dish(dish_id)
+    cache.delete_submenu(menu_id, submenu_id)
+    cache.delete_dish(submenu_id, dish_id)
 
 
 def read_dish(dish_id: UUID) -> DishRead | None:
