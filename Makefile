@@ -1,32 +1,49 @@
-.PHONY: 
-	build-app build-test build-both
-	up-app up-test up-both
-	down-app down-test down-both
-	show-test-logs
+DOCKER_COMPOSE_APP := docker-compose-app.yml
+DOCKER_COMPOSE_TEST := docker-compose-test.yml
 
+
+.PHONY: build-app
 build-app:
-	docker-compose -f docker-compose-app.yml build
+	docker-compose -f $(DOCKER_COMPOSE_APP) build
+
+.PHONY: build-test
 build-test:
-	docker-compose -f docker-compose-test.yml build
+	docker-compose -f $(DOCKER_COMPOSE_TEST) build
+
+.PHONY: build-both
 build-both:
-	docker-compose -f docker-compose-app.yml build
-	docker-compose -f docker-compose-test.yml build
+	docker-compose -f $(DOCKER_COMPOSE_APP) build
+	docker-compose -f $(DOCKER_COMPOSE_TEST) build
 
+
+.PHONY: up-app
 up-app:
-	docker-compose -f docker-compose-app.yml up -d
+	docker-compose -f $(DOCKER_COMPOSE_APP) up -d
+
+.PHONY: up-test
 up-test:
-	docker-compose -f docker-compose-test.yml up -d
+	docker-compose -f $(DOCKER_COMPOSE_APP) up -d
+
+.PHONY: up-both
 up-both:
-	docker-compose -f docker-compose-app.yml up -d
-	docker-compose -f docker-compose-test.yml up -d
+	docker-compose -f $(DOCKER_COMPOSE_APP) up -d
+	docker-compose -f $(DOCKER_COMPOSE_TEST) up -d
 
+
+.PHONY: down-app
 down-app:
-	docker-compose -f docker-compose-app.yml down
-down-test:
-	docker-compose -f docker-compose-test.yml down
-down-both:
-	docker-compose -f docker-compose-app.yml down
-	docker-compose -f docker-compose-test.yml down
+	docker-compose -f $(DOCKER_COMPOSE_APP) down
 
+.PHONY: down-test
+down-test:
+	docker-compose -f $(DOCKER_COMPOSE_TEST) down
+
+.PHONY: down-both
+down-both:
+	docker-compose -f $(DOCKER_COMPOSE_APP) down
+	docker-compose -f $(DOCKER_COMPOSE_TEST) down
+
+
+.PHONY: show-test-logs
 show-test-logs:
-	docker-compose -f docker-compose-test.yml logs -f api-test
+	docker-compose -f $(DOCKER_COMPOSE_TEST) logs -f api-test

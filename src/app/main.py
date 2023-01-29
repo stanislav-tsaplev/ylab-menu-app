@@ -17,8 +17,3 @@ app.include_router(dish.router, tags=["dish"])
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
-
-
-@app.on_event("shutdown")
-def on_shutdown():
-    pass

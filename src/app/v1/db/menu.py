@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlmodel import Session, delete, select, update
 
-from ...database import engine
+from ...database import db_engine
 from ..models.menu import Menu, MenuCreate, MenuUpdate
 
 
@@ -11,7 +11,7 @@ def create_menu(menu_creating_data: MenuCreate) -> Menu:
 
     Returns newly created `Menu` object
     """
-    with Session(engine) as session:
+    with Session(db_engine) as session:
         db_menu = Menu.from_orm(menu_creating_data)
         session.add(db_menu)
 
@@ -29,7 +29,7 @@ def update_menu(menu_id: UUID, menu_updating_data: MenuUpdate) -> Menu | None:
     when `menu_id` is a valid menu id
     or `None` otherwise
     """
-    with Session(engine) as session:
+    with Session(db_engine) as session:
         db_menu = session.exec(
             select(Menu).where(Menu.id == menu_id)
         ).one_or_none()
@@ -52,14 +52,14 @@ def update_menu(menu_id: UUID, menu_updating_data: MenuUpdate) -> Menu | None:
 
 
 def delete_menu(menu_id: UUID) -> None:
-    with Session(engine) as session:
+    with Session(db_engine) as session:
         session.exec(delete(Menu).where(Menu.id == menu_id))
 
         session.commit()
 
 
 def read_menu(menu_id: UUID) -> Menu | None:
-    with Session(engine) as session:
+    with Session(db_engine) as session:
         db_menu = session.get(Menu, menu_id)
         if db_menu is None:
             return None
@@ -68,7 +68,7 @@ def read_menu(menu_id: UUID) -> Menu | None:
 
 
 def read_all_menus() -> list[Menu]:
-    with Session(engine) as session:
+    with Session(db_engine) as session:
         db_menus = session.exec(select(Menu)).all()
 
         return db_menus

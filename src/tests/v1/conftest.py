@@ -4,7 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import SQLModel
 
-from app.database import engine
+from app.database import db_engine
 from app.main import app
 from app.v1.routes import ROUTES
 
@@ -19,15 +19,14 @@ BASE_URL = "http://127.0.0.1:8000"
 
 @pytest.fixture(autouse=True)
 def reset_database():
-    SQLModel.metadata.drop_all(engine)
-    SQLModel.metadata.create_all(engine)
+    SQLModel.metadata.drop_all(db_engine)
+    SQLModel.metadata.create_all(db_engine)
 
 
 @pytest.fixture(scope="session")
 def client():
-    cli = TestClient(app, base_url=BASE_URL)
-
-    yield cli
+    test_client = TestClient(app, base_url=BASE_URL)
+    yield test_client
 
 
 @pytest.fixture
