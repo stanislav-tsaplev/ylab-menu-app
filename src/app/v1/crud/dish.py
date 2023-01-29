@@ -1,68 +1,57 @@
 from uuid import UUID
 
-from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session, delete, select, update
+from .. import db, cache
+from ..models.dish import (
+    DishCreate,
+    DishCreated,
+    DishRead,
+    DishUpdate,
+    DishUpdated,
+)
 
-from ...database import engine
-from ..models.dish import Dish, DishCreate, DishUpdate
+
+def create_dish(
+    submenu_id: UUID, dish_creating_data: DishCreate
+) -> DishCreated | None:
+    db_dish = db.create_dish(submenu_id, dish_creating_data)
+    # cache.put_dish(db_dish)
+
+    return db_dish
 
 
-def create_dish(submenu_id: UUID, dish: DishCreate) -> Dish | None:
-    with Session(engine) as session:
-        try:
-            dish.submenu_id = submenu_id
-            db_dish = Dish.from_orm(dish)
-            session.add(db_dish)
+def update_dish(
+    dish_id: UUID, dish_updating_data: DishUpdate
+) -> DishUpdated | None:
+    db_dish = db.update_dish(dish_id, dish_updating_data)
+    if db_dish is None:
+        return None
 
-            session.commit()
-        except IntegrityError:
-            return None
+    cache.delete_dish(db_dish.submenu_id, dish_id)
+    # cache.put_dish(db_dish)
 
-        session.refresh(db_dish)
+    return db_dish
+
+
+def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> None:
+    db.delete_dish(dish_id)
+
+    cache.delete_menu(menu_id)
+    cache.delete_submenu(menu_id, submenu_id)
+    cache.delete_dish(submenu_id, dish_id)
+
+
+def read_dish(dish_id: UUID) -> DishRead | None:
+    cached_dish = cache.get_dish(dish_id)
+    if cached_dish is not None:
+        return cached_dish
+
+    db_dish = db.read_dish(dish_id)
+    if db_dish is not None:
+        cache.put_dish(db_dish)
         return db_dish
 
-
-def update_dish(dish_id: UUID, updated_dish: DishUpdate) -> Dish | None:
-    with Session(engine) as session:
-        db_dish = session.exec(
-            select(Dish).where(Dish.id == dish_id)
-        ).one_or_none()
-
-        if db_dish is None:
-            return None
-
-        session.exec(
-            update(Dish)
-            .where(Dish.id == dish_id)
-            .values(**updated_dish.dict(exclude={"id"}, exclude_unset=True))
-        )
-
-        session.commit()
-        session.refresh(db_dish)
-
-        return db_dish
+    return None
 
 
-def delete_dish(dish_id: UUID) -> None:
-    with Session(engine) as session:
-        session.exec(delete(Dish).where(Dish.id == dish_id))
-
-        session.commit()
-
-
-def read_dish(dish_id: UUID) -> Dish | None:
-    with Session(engine) as session:
-        db_dish = session.get(Dish, dish_id)
-        if db_dish is None:
-            return None
-
-        return db_dish
-
-
-def read_all_dishes(submenu_id: UUID) -> list[Dish]:
-    with Session(engine) as session:
-        db_dishes = session.exec(
-            select(Dish).where(Dish.submenu_id == submenu_id)
-        ).all()
-
-        return db_dishes
+def read_all_dishes(submenu_id: UUID) -> list[DishRead]:
+    return db.read_all_dishes(submenu_id)

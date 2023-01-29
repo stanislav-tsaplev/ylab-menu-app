@@ -26,9 +26,9 @@ router = APIRouter(prefix=ROUTES["dishes"])
     ),
 )
 def create_dish(
-    menu_id: UUID, submenu_id: UUID, dish: DishCreate
+    menu_id: UUID, submenu_id: UUID, dish_creating_data: DishCreate
 ) -> DishCreated:
-    created_dish = crud.create_dish(submenu_id, dish)
+    created_dish = crud.create_dish(submenu_id, dish_creating_data)
     if created_dish is None:
         raise HTTPException(status_code=404, detail="submenu not found")
     return created_dish
@@ -41,17 +41,20 @@ def create_dish(
     ),
 )
 def update_dish(
-    menu_id: UUID, submenu_id: UUID, dish_id: UUID, updated_dish: DishUpdate
+    menu_id: UUID,
+    submenu_id: UUID,
+    dish_id: UUID,
+    dish_updating_data: DishUpdate,
 ) -> DishUpdated:
-    dish = crud.update_dish(dish_id, updated_dish)
-    if dish is None:
+    updated_dish = crud.update_dish(dish_id, dish_updating_data)
+    if updated_dish is None:
         raise HTTPException(status_code=404, detail="dish not found")
-    return dish
+    return updated_dish
 
 
 @router.delete("/{dish_id}")
 def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> ResultInfo:
-    crud.delete_dish(dish_id)
+    crud.delete_dish(menu_id, submenu_id, dish_id)
     return ResultInfo(status=True, message="The dish has been deleted")
 
 

@@ -1,10 +1,13 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from .database import create_db_and_tables
 from .v1.routers import dish, menu, submenu
 
-app = FastAPI()
 
+load_dotenv()
+
+app = FastAPI()
 
 app.include_router(menu.router, tags=["menu"])
 app.include_router(submenu.router, tags=["submenu"])
