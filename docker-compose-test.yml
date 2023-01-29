@@ -17,8 +17,20 @@ services:
       timeout: 5s
       retries: 3
 
+  cache-test:
+    image: redis:6.2-alpine
+    ports:
+      - 6381:6379
+    env_file:
+      - .docker-test.env
+    command: redis-server /etc/redis/6379.conf
+    networks:
+      - netcachetest
+    volumes:
+      - cache-test:/data
+
   api-test:
-    build: 
+    build:
       context: ./src
       dockerfile: Dockerfile-test
     command: |
@@ -31,12 +43,17 @@ services:
       - .docker-test.env
     networks:
       - nettest
+      - netcachetest
     depends_on:
       db-test:
         condition: service_healthy
 
 volumes:
   pgdata-test:
+  cache-test:
   app-test:
+
 networks:
   nettest: {}
+  netcachetest:
+    driver: bridge

@@ -22,7 +22,7 @@ up-app:
 
 .PHONY: up-test
 up-test:
-	docker-compose -f $(DOCKER_COMPOSE_APP) up -d
+	docker-compose -f $(DOCKER_COMPOSE_TEST) up -d
 
 .PHONY: up-both
 up-both:
