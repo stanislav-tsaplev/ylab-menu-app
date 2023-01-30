@@ -27,7 +27,7 @@ make build-test
 ```bash
 make up-test
 ```
-* Pytest session will start in the background  
+* Pytest session will start in the background
 
 * Now you can see the test results
 ```bash
@@ -50,7 +50,7 @@ make up-both
 ```
 * Application is now available at the address [`http://127.0.0.1:8000`](http://127.0.0.1:8000)
 * API documentation is available at the address [`http://127.0.0.1:8000/docs`](http://127.0.0.1:8000/docs)
-* At the same time Pytest session has started in the background  
+* At the same time Pytest session has started in the background
 
 * You can see the test results
 ```bash
