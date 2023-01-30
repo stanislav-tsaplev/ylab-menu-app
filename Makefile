@@ -44,6 +44,10 @@ down-both:
 	docker-compose -f $(DOCKER_COMPOSE_TEST) down
 
 
+.PHONY: show-app-logs
+show-app-logs:
+	docker-compose -f $(DOCKER_COMPOSE_APP) logs -f api
+
 .PHONY: show-test-logs
 show-test-logs:
 	docker-compose -f $(DOCKER_COMPOSE_TEST) logs -f api-test

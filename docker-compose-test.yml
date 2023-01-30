@@ -4,7 +4,7 @@ services:
   db-test:
     image: postgres:15.1-alpine
     volumes:
-      - pgdata-test/:/var/lib/postgresql/data/
+      - ./pg-data-test:/var/lib/postgresql/data/
     ports:
       - 5434:5432
     env_file:
@@ -19,15 +19,22 @@ services:
 
   cache-test:
     image: redis:6.2-alpine
-    ports:
-      - 6381:6379
+    container_name: cache-test
+    volumes:
+      - ./redis-test-logs:/log
+      - ./redis-test-conf:/conf
     env_file:
       - .docker-test.env
-    command: redis-server /etc/redis/6379.conf
+    command: "redis-server /conf/default.conf --loglevel verbose"
     networks:
       - netcachetest
-    volumes:
-      - cache-test:/data
+    ports:
+      - 6383:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   api-test:
     build:
@@ -36,7 +43,7 @@ services:
     command: |
       bash -c 'pytest -v'
     volumes:
-      - app-test:/src
+      - ./src:/src
     ports:
       - 8080:8000
     env_file:
@@ -47,13 +54,9 @@ services:
     depends_on:
       db-test:
         condition: service_healthy
-
-volumes:
-  pgdata-test:
-  cache-test:
-  app-test:
+      cache-test:
+        condition: service_healthy
 
 networks:
   nettest: {}
-  netcachetest:
-    driver: bridge
+  netcachetest: {}

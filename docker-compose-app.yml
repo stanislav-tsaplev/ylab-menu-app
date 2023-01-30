@@ -4,53 +4,58 @@ services:
   db:
     image: postgres:15.1-alpine
     volumes:
-      - pgdata/:/var/lib/postgresql/data/
+      - ./pg-data:/var/lib/postgresql/data/
     ports:
       - 5433:5432
     env_file:
-      - .docker.env
+      - .docker-app.env
     networks:
       - default
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${DB_NAME} -U $${DB_USER}"]
-      interval: 30s
-      timeout: 30s
+      interval: 5s
+      timeout: 5s
       retries: 3
 
-  cache:
+  cache-app:
     image: redis:6.2-alpine
-    ports:
-      - 6380:6379
+    container_name: cache-app
+    volumes:
+      - ./redis-logs:/log
+      - ./redis-conf:/conf
     env_file:
-      - .docker.env
-    command: redis-server /etc/redis/6379.conf
+      - .docker-app.env
+    command: "redis-server /conf/default.conf --loglevel verbose"
     networks:
       - netcache
-    volumes:
-      - cache:/data
+    ports:
+      - 6381:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   api:
-    build: ./src
+    build:
+      context: ./src
+      dockerfile: Dockerfile
     command: |
       bash -c 'alembic upgrade head && uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000'
     volumes:
-      - app:/src
+      - ./src:/src
     ports:
       - 8000:8000
     env_file:
-      - .docker.env
+      - .docker-app.env
     networks:
       - default
       - netcache
     depends_on:
       db:
         condition: service_healthy
-
-volumes:
-  pgdata:
-  cache:
-  app:
+      cache-app:
+        condition: service_healthy
 
 networks:
-  netcache:
-    driver: bridge
+  netcache: {}
