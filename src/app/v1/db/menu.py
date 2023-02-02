@@ -7,9 +7,9 @@ from ..models.menu import Menu, MenuCreate, MenuUpdate
 
 
 def create_menu(menu_creating_data: MenuCreate) -> Menu:
-    """Creates a new menu with the `menu_creating_data` values.
+    """Create a new menu with the creating values.
 
-    Returns newly created `Menu` object
+    Return newly created `Menu` object
     """
     with Session(db_engine) as session:
         db_menu = Menu.from_orm(menu_creating_data)
@@ -22,11 +22,9 @@ def create_menu(menu_creating_data: MenuCreate) -> Menu:
 
 
 def update_menu(menu_id: UUID, menu_updating_data: MenuUpdate) -> Menu | None:
-    """Updates the menu gotten by `menu_id`
-    with the `menu_updating_data` values.
+    """Update the menu with the updating values.
 
-    Returns the updated `Menu` object,
-    when `menu_id` is a valid menu id
+    Return the updated `Menu` object,when `menu_id` is a valid menu id
     or `None` otherwise
     """
     with Session(db_engine) as session:

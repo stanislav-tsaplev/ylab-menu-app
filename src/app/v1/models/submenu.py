@@ -3,10 +3,10 @@ from uuid import UUID, uuid4
 
 from sqlalchemy.orm import column_property
 from sqlmodel import (
-    Field,
-    ForeignKeyConstraint,
-    Relationship,
     SQLModel,
+    Field,
+    Relationship,
+    ForeignKeyConstraint,
     func,
     select,
 )
