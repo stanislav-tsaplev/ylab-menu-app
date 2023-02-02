@@ -4,16 +4,9 @@ from fastapi import APIRouter, HTTPException, status
 
 from .. import crud
 from ..models.common import ResultInfo
-from ..models.menu import (
-    MenuCreate,
-    MenuCreated,
-    MenuRead,
-    MenuUpdate,
-    MenuUpdated,
-)
+from ..models.menu import MenuCreate, MenuCreated, MenuRead, MenuUpdate, MenuUpdated
 from ..routes import ROUTES
 from .helpers import http_exception_response
-
 
 router = APIRouter(prefix=ROUTES["menus"])
 

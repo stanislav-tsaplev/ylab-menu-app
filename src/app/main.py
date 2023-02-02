@@ -4,7 +4,6 @@ from fastapi import FastAPI
 from .database import create_db_and_tables
 from .v1.routers import dish, menu, submenu
 
-
 load_dotenv()
 
 app = FastAPI()

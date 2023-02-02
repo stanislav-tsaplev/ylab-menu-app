@@ -1,13 +1,7 @@
 from uuid import UUID
 
-from .. import db, cache
-from ..models.menu import (
-    MenuCreate,
-    MenuCreated,
-    MenuRead,
-    MenuUpdate,
-    MenuUpdated,
-)
+from .. import cache, db
+from ..models.menu import MenuCreate, MenuCreated, MenuRead, MenuUpdate, MenuUpdated
 
 
 def create_menu(menu_creating_data: MenuCreate) -> MenuCreated:
@@ -17,9 +11,7 @@ def create_menu(menu_creating_data: MenuCreate) -> MenuCreated:
     return db_menu
 
 
-def update_menu(
-    menu_id: UUID, menu_updating_data: MenuUpdate
-) -> MenuUpdated | None:
+def update_menu(menu_id: UUID, menu_updating_data: MenuUpdate) -> MenuUpdated | None:
     db_menu = db.update_menu(menu_id, menu_updating_data)
     if db_menu is None:
         return None

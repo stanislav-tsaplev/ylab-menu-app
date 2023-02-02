@@ -2,7 +2,6 @@ from os import environ as env
 
 from sqlmodel import SQLModel, create_engine
 
-
 DB_USER = env["DB_USER"]
 DB_PASS = env["DB_PASS"]
 DB_HOST = env["DB_HOST"]

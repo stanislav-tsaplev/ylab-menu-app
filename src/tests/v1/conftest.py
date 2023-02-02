@@ -8,11 +8,7 @@ from app.database import db_engine
 from app.main import app
 from app.v1.routes import ROUTES
 
-from .resources import (
-    creating_dish_data,
-    creating_menu_data,
-    creating_submenu_data,
-)
+from .resources import creating_dish_data, creating_menu_data, creating_submenu_data
 
 BASE_URL = "http://127.0.0.1:8000"
 

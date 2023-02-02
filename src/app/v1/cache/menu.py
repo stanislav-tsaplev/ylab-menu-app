@@ -5,12 +5,12 @@ from fastapi.encoders import jsonable_encoder
 from ...cache import cache_engine
 from ..models.menu import Menu
 
-
 # Menu objects are stored in Redis as hash of its fields
 # with hexified menu id as key
 
 
 def put_menu(menu: Menu) -> None:
+    assert menu.id
     cache_engine.hset(menu.id.hex, mapping=jsonable_encoder(menu))
 
 

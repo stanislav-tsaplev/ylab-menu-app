@@ -21,18 +21,14 @@ def upgrade() -> None:
     op.create_table(
         "menu",
         sa.Column("title", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.Column(
-            "description", sqlmodel.sql.sqltypes.AutoString(), nullable=True
-        ),
+        sa.Column("description", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
         sa.Column("id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
         "submenu",
         sa.Column("title", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.Column(
-            "description", sqlmodel.sql.sqltypes.AutoString(), nullable=True
-        ),
+        sa.Column("description", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
         sa.Column("id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
         sa.Column("menu_id", sqlmodel.sql.sqltypes.GUID(), nullable=True),
         sa.ForeignKeyConstraint(["menu_id"], ["menu.id"], ondelete="CASCADE"),
@@ -41,15 +37,11 @@ def upgrade() -> None:
     op.create_table(
         "dish",
         sa.Column("title", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.Column(
-            "description", sqlmodel.sql.sqltypes.AutoString(), nullable=True
-        ),
+        sa.Column("description", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
         sa.Column("id", sqlmodel.sql.sqltypes.GUID(), nullable=False),
         sa.Column("price", sa.Numeric(scale=2), nullable=False),
         sa.Column("submenu_id", sqlmodel.sql.sqltypes.GUID(), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["submenu_id"], ["submenu.id"], ondelete="CASCADE"
-        ),
+        sa.ForeignKeyConstraint(["submenu_id"], ["submenu.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###

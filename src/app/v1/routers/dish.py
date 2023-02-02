@@ -4,16 +4,9 @@ from fastapi import APIRouter, HTTPException
 
 from .. import crud
 from ..models.common import ResultInfo
-from ..models.dish import (
-    DishCreate,
-    DishCreated,
-    DishRead,
-    DishUpdate,
-    DishUpdated,
-)
+from ..models.dish import DishCreate, DishCreated, DishRead, DishUpdate, DishUpdated
 from ..routes import ROUTES
 from .helpers import http_exception_response
-
 
 router = APIRouter(prefix=ROUTES["dishes"])
 
@@ -21,9 +14,7 @@ router = APIRouter(prefix=ROUTES["dishes"])
 @router.post(
     "/",
     status_code=201,
-    responses=http_exception_response(
-        status_code=404, detail="submenu not found"
-    ),
+    responses=http_exception_response(status_code=404, detail="submenu not found"),
 )
 def create_dish(
     menu_id: UUID, submenu_id: UUID, dish_creating_data: DishCreate
@@ -36,9 +27,7 @@ def create_dish(
 
 @router.patch(
     "/{dish_id}",
-    responses=http_exception_response(
-        status_code=404, detail="dish not found"
-    ),
+    responses=http_exception_response(status_code=404, detail="dish not found"),
 )
 def update_dish(
     menu_id: UUID,
@@ -60,9 +49,7 @@ def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> ResultInfo:
 
 @router.get(
     "/{dish_id}",
-    responses=http_exception_response(
-        status_code=404, detail="dish not found"
-    ),
+    responses=http_exception_response(status_code=404, detail="dish not found"),
 )
 def read_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> DishRead:
     dish = crud.read_dish(dish_id)

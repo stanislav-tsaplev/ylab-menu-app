@@ -38,11 +38,7 @@ def update_submenu(
         session.exec(
             update(Submenu)
             .where(Submenu.id == submenu_id)
-            .values(
-                **submenu_updating_data.dict(
-                    exclude={"id"}, exclude_unset=True
-                )
-            )
+            .values(**submenu_updating_data.dict(exclude={"id"}, exclude_unset=True))
         )
 
         session.commit()

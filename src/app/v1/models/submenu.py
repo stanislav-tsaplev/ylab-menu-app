@@ -2,14 +2,7 @@ from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
 from sqlalchemy.orm import column_property
-from sqlmodel import (
-    SQLModel,
-    Field,
-    Relationship,
-    ForeignKeyConstraint,
-    func,
-    select,
-)
+from sqlmodel import Field, ForeignKeyConstraint, Relationship, SQLModel, func, select
 
 if TYPE_CHECKING:
     from .menu import Menu
@@ -17,7 +10,7 @@ if TYPE_CHECKING:
 from .dish import Dish
 
 
-class Submenu(SQLModel, table=True):
+class Submenu(SQLModel, table=True):  # type: ignore
     __table_args__ = (
         ForeignKeyConstraint(["menu_id"], ["menu.id"], ondelete="CASCADE"),
     )

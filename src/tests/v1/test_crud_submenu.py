@@ -37,9 +37,7 @@ def test_update_submenu_success(client, existing_menu_id, existing_submenu_id):
     }
 
 
-def test_update_submenu_fail(
-    client, existing_menu_id, non_existing_submenu_id
-):
+def test_update_submenu_fail(client, existing_menu_id, non_existing_submenu_id):
     route_url = ROUTES["submenu"].format(
         menu_id=existing_menu_id, submenu_id=non_existing_submenu_id
     )

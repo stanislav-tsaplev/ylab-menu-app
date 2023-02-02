@@ -5,7 +5,6 @@ from fastapi.encoders import jsonable_encoder
 from ...cache import cache_engine
 from ..models.dish import Dish
 
-
 # Dish objects are stored in Redis as a hash of its fields
 # with hexified dish id as key
 # In addition special set stores dish ids of a specific submenu
@@ -13,6 +12,7 @@ from ..models.dish import Dish
 
 
 def put_dish(dish: Dish) -> None:
+    assert dish.id and dish.submenu_id
     cache_engine.hset(dish.id.hex, mapping=jsonable_encoder(dish))
     cache_engine.sadd(f"~{dish.submenu_id.hex}", dish.id.hex)
 

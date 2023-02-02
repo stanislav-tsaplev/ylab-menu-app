@@ -1,13 +1,13 @@
 from uuid import UUID, uuid4
 
 from sqlalchemy.orm import column_property
-from sqlmodel import SQLModel, Field, Relationship, func, select
+from sqlmodel import Field, Relationship, SQLModel, func, select
 
 from .dish import Dish
 from .submenu import Submenu
 
 
-class Menu(SQLModel, table=True):
+class Menu(SQLModel, table=True):  # type: ignore
     id: UUID | None = Field(default_factory=uuid4, primary_key=True)
     title: str
     description: str | None = None

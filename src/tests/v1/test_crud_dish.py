@@ -57,9 +57,7 @@ def test_update_dish_fail(
     assert response.json() == not_found_dish_response
 
 
-def test_delete_dish(
-    client, existing_menu_id, existing_submenu_id, existing_dish_id
-):
+def test_delete_dish(client, existing_menu_id, existing_submenu_id, existing_dish_id):
     route_url = ROUTES["dish"].format(
         menu_id=existing_menu_id,
         submenu_id=existing_submenu_id,

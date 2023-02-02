@@ -28,9 +28,7 @@ def update_menu(menu_id: UUID, menu_updating_data: MenuUpdate) -> Menu | None:
     or `None` otherwise
     """
     with Session(db_engine) as session:
-        db_menu = session.exec(
-            select(Menu).where(Menu.id == menu_id)
-        ).one_or_none()
+        db_menu = session.exec(select(Menu).where(Menu.id == menu_id)).one_or_none()
 
         if db_menu is None:
             return None
@@ -38,9 +36,7 @@ def update_menu(menu_id: UUID, menu_updating_data: MenuUpdate) -> Menu | None:
         session.exec(
             update(Menu)
             .where(Menu.id == menu_id)
-            .values(
-                **menu_updating_data.dict(exclude={"id"}, exclude_unset=True)
-            )
+            .values(**menu_updating_data.dict(exclude={"id"}, exclude_unset=True))
         )
 
         session.commit()

@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from .. import db, cache
+from .. import cache, db
 from ..models.submenu import (
     SubmenuCreate,
     SubmenuCreated,
@@ -26,6 +26,7 @@ def update_submenu(
     if db_submenu is None:
         return None
 
+    assert db_submenu.menu_id
     cache.delete_submenu(db_submenu.menu_id, submenu_id)
     # cache.put_submenu(db_submenu)
 

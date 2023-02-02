@@ -6,6 +6,5 @@ ROUTES = {
     "submenus": ROOT_PATH + "/menus/{menu_id}/submenus",
     "submenu": ROOT_PATH + "/menus/{menu_id}/submenus/{submenu_id}",
     "dishes": ROOT_PATH + "/menus/{menu_id}/submenus/{submenu_id}/dishes",
-    "dish": ROOT_PATH
-    + "/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}",
+    "dish": ROOT_PATH + "/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}",
 }

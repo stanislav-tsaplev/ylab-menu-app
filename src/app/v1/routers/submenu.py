@@ -14,7 +14,6 @@ from ..models.submenu import (
 from ..routes import ROUTES
 from .helpers import http_exception_response
 
-
 router = APIRouter(prefix=ROUTES["submenus"])
 
 
