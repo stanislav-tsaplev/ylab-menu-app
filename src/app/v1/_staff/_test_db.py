@@ -1,16 +1,16 @@
 import yaml
 from fastapi import APIRouter, status
 
-from ... import crud
-from ...models import MenuCreate, SubmenuCreate, DishCreate, ResultInfo
+from .. import crud
+from ..models import MenuCreate, SubmenuCreate, DishCreate, OperationResult
 
 router = APIRouter(prefix="/api/v1")
 
 
 @router.post("/test-db/", status_code=status.HTTP_201_CREATED)
 @router.post("/test-db/{n}", status_code=status.HTTP_201_CREATED)
-def create_test_db(n: int = 1) -> ResultInfo:
-    with open(f"./app/v1/routers/_staff/test_db_{n}.yaml") as test_db_file:
+def create_test_db(n: int = 1) -> OperationResult:
+    with open(f"/app/v1/_staff/test_db_{n}.yaml") as test_db_file:
         test_db_data = yaml.safe_load(test_db_file)
 
     for menu_data in test_db_data["menus"]:
@@ -18,7 +18,7 @@ def create_test_db(n: int = 1) -> ResultInfo:
             MenuCreate(title=menu_data["title"], description=menu_data["desc"])
         )
         if menu is None:
-            return ResultInfo(status=False, message="failure")
+            return OperationResult(status=False, message="Test data loading failed")
 
         for submenu_data in menu_data["submenus"]:
             submenu = crud.create_submenu(
@@ -28,7 +28,7 @@ def create_test_db(n: int = 1) -> ResultInfo:
                 ),
             )
             if submenu is None:
-                return ResultInfo(status=False, message="failure")
+                return OperationResult(status=False, message="Test data loading failed")
 
             for dish_data in submenu_data["dishes"]:
                 dish = crud.create_dish(
@@ -40,13 +40,15 @@ def create_test_db(n: int = 1) -> ResultInfo:
                     ),
                 )
                 if dish is None:
-                    return ResultInfo(status=False, message="failure")
+                    return OperationResult(
+                        status=False, message="Test data loading failed"
+                    )
 
-    return ResultInfo(status=True, message="success")
+    return OperationResult(status=True, message="Test data was successfully loaded")
 
 
 @router.delete("/test-db/")
-def clear_db() -> ResultInfo:
+def clear_test_db() -> OperationResult:
     for menu in crud.read_all_menus():
         crud.delete_menu(menu.id)
-    return ResultInfo(status=True, message="Database was successfully cleared")
+    return OperationResult(status=True, message="Database was successfully cleared")
