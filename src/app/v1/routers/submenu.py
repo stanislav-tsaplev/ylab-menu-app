@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, status
 
 from .. import crud
-from ..models.common import ResultInfo
+from ..models.common import OperationResult
 from ..models.submenu import (
     SubmenuCreate,
     SubmenuCreated,
@@ -52,9 +52,9 @@ def update_submenu(
 
 
 @router.delete("/{submenu_id}")
-def delete_submenu(menu_id: UUID, submenu_id: UUID) -> ResultInfo:
+def delete_submenu(menu_id: UUID, submenu_id: UUID) -> OperationResult:
     crud.delete_submenu(menu_id, submenu_id)
-    return ResultInfo(status=True, message="The submenu has been deleted")
+    return OperationResult(status=True, message="The submenu has been deleted")
 
 
 @router.get(

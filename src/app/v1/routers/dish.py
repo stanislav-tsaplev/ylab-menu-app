@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException
 
 from .. import crud
-from ..models.common import ResultInfo
+from ..models.common import OperationResult
 from ..models.dish import DishCreate, DishCreated, DishRead, DishUpdate, DishUpdated
 from .helpers import http_exception_response
 
@@ -41,9 +41,9 @@ def update_dish(
 
 
 @router.delete("/{dish_id}")
-def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> ResultInfo:
+def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> OperationResult:
     crud.delete_dish(menu_id, submenu_id, dish_id)
-    return ResultInfo(status=True, message="The dish has been deleted")
+    return OperationResult(status=True, message="The dish has been deleted")
 
 
 @router.get(

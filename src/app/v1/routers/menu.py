@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, status
 
 from .. import crud
-from ..models.common import ResultInfo
+from ..models.common import OperationResult
 from ..models.menu import MenuCreate, MenuCreated, MenuRead, MenuUpdate, MenuUpdated
 from .helpers import http_exception_response
 
@@ -32,9 +32,9 @@ def update_menu(menu_id: UUID, menu_updating_data: MenuUpdate) -> MenuUpdated:
 
 
 @router.delete("/{menu_id}")
-def delete_menu(menu_id: UUID) -> ResultInfo:
+def delete_menu(menu_id: UUID) -> OperationResult:
     crud.delete_menu(menu_id)
-    return ResultInfo(status=True, message="The menu has been deleted")
+    return OperationResult(status=True, message="The menu has been deleted")
 
 
 @router.get(
