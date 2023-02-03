@@ -5,10 +5,9 @@ from fastapi import APIRouter, HTTPException
 from .. import crud
 from ..models.common import ResultInfo
 from ..models.dish import DishCreate, DishCreated, DishRead, DishUpdate, DishUpdated
-from ..routes import ROUTES
 from .helpers import http_exception_response
 
-router = APIRouter(prefix=ROUTES["dishes"])
+router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes")
 
 
 @router.post(

@@ -11,10 +11,9 @@ from ..models.submenu import (
     SubmenuUpdate,
     SubmenuUpdated,
 )
-from ..routes import ROUTES
 from .helpers import http_exception_response
 
-router = APIRouter(prefix=ROUTES["submenus"])
+router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus")
 
 
 @router.post(

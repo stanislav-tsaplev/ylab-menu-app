@@ -1,5 +1,4 @@
-from app.v1.routes import ROUTES
-
+from .conftest import app
 from .resources.dish import (
     created_dish_data,
     creating_dish_data,
@@ -12,8 +11,8 @@ from .resources.dish import (
 
 
 def test_create_dish(client, existing_menu_id, existing_submenu_id):
-    route_url = ROUTES["dishes"].format(
-        menu_id=existing_menu_id, submenu_id=existing_submenu_id
+    route_url = app.url_path_for(
+        "create_dish", menu_id=existing_menu_id, submenu_id=existing_submenu_id
     )
     response = client.post(url=route_url, json=creating_dish_data)
 
@@ -29,7 +28,8 @@ def test_create_dish(client, existing_menu_id, existing_submenu_id):
 def test_update_dish_success(
     client, existing_menu_id, existing_submenu_id, existing_dish_id
 ):
-    route_url = ROUTES["dish"].format(
+    route_url = app.url_path_for(
+        "update_dish",
         menu_id=existing_menu_id,
         submenu_id=existing_submenu_id,
         dish_id=existing_dish_id,
@@ -46,7 +46,8 @@ def test_update_dish_success(
 def test_update_dish_fail(
     client, existing_menu_id, existing_submenu_id, non_existing_dish_id
 ):
-    route_url = ROUTES["dish"].format(
+    route_url = app.url_path_for(
+        "update_dish",
         menu_id=existing_menu_id,
         submenu_id=existing_submenu_id,
         dish_id=non_existing_dish_id,
@@ -58,7 +59,8 @@ def test_update_dish_fail(
 
 
 def test_delete_dish(client, existing_menu_id, existing_submenu_id, existing_dish_id):
-    route_url = ROUTES["dish"].format(
+    route_url = app.url_path_for(
+        "delete_dish",
         menu_id=existing_menu_id,
         submenu_id=existing_submenu_id,
         dish_id=existing_dish_id,
@@ -72,7 +74,8 @@ def test_delete_dish(client, existing_menu_id, existing_submenu_id, existing_dis
 def test_read_dish_success(
     client, existing_menu_id, existing_submenu_id, existing_dish_id
 ):
-    route_url = ROUTES["dish"].format(
+    route_url = app.url_path_for(
+        "read_dish",
         menu_id=existing_menu_id,
         submenu_id=existing_submenu_id,
         dish_id=existing_dish_id,
@@ -89,7 +92,8 @@ def test_read_dish_success(
 def test_read_dish_fail(
     client, existing_menu_id, existing_submenu_id, non_existing_dish_id
 ):
-    route_url = ROUTES["dish"].format(
+    route_url = app.url_path_for(
+        "read_dish",
         menu_id=existing_menu_id,
         submenu_id=existing_submenu_id,
         dish_id=non_existing_dish_id,
@@ -103,7 +107,8 @@ def test_read_dish_fail(
 def test_read_all_dishes(
     client, existing_menu_id, existing_submenu_id, existing_dish_id
 ):
-    route_url = ROUTES["dishes"].format(
+    route_url = app.url_path_for(
+        "read_all_dishes",
         menu_id=existing_menu_id,
         submenu_id=existing_submenu_id,
     )
