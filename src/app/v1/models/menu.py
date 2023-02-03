@@ -1,7 +1,7 @@
 from uuid import UUID, uuid4
 
 from sqlalchemy.orm import column_property
-from sqlmodel import Field, Relationship, SQLModel, func, select
+from sqlmodel import SQLModel, Field, Relationship, select, func
 
 from .dish import Dish
 from .submenu import Submenu

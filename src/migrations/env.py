@@ -4,7 +4,7 @@ from os import environ
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from app.v1.models import Dish, Menu, SQLModel, Submenu  # noqa
+from app.v1.models import SQLModel, Menu, Submenu, Dish  # noqa
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

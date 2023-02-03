@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
 from sqlalchemy.orm import column_property
-from sqlmodel import Field, ForeignKeyConstraint, Relationship, SQLModel, func, select
+from sqlmodel import SQLModel, Field, Relationship, ForeignKeyConstraint, select, func
 
 if TYPE_CHECKING:
     from .menu import Menu

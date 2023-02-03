@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session, delete, select, update
+from sqlmodel import Session, select, update, delete
 
 from ...database import db_engine
 from ..models.dish import Dish, DishCreate, DishUpdate

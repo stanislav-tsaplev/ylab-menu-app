@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from .database import create_db_and_tables
-from .v1.routers import dish, menu, submenu
+from .v1.routers import menu, submenu, dish
 from .v1.routers._staff import test_db
 
 load_dotenv()

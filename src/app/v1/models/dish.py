@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Optional
 from uuid import UUID, uuid4
 
 from pydantic import condecimal
-from sqlmodel import Field, ForeignKeyConstraint, Relationship, SQLModel
+from sqlmodel import SQLModel, Field, Relationship, ForeignKeyConstraint
 
 if TYPE_CHECKING:
     from .submenu import Submenu
