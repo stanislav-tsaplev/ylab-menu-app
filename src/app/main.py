@@ -3,7 +3,7 @@ from fastapi import FastAPI
 
 from .database import create_db_and_tables
 from .v1._staff import _test_db
-from .v1.routers import menu, submenu, dish
+from .v1.routers import menu, submenu, dish, catalog
 
 load_dotenv()
 
@@ -12,6 +12,7 @@ app = FastAPI()
 app.include_router(menu.router, tags=["menu"])
 app.include_router(submenu.router, tags=["submenu"])
 app.include_router(dish.router, tags=["dish"])
+app.include_router(catalog.router, tags=["catalog"])
 
 app.include_router(_test_db.router)
 

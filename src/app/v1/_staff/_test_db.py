@@ -15,7 +15,7 @@ def create_test_db(n: int = 1) -> OperationResult:
 
     for menu_data in test_db_data["menus"]:
         menu = crud.create_menu(
-            MenuCreate(title=menu_data["title"], description=menu_data["desc"])
+            MenuCreate(title=menu_data["title"], description=menu_data["description"])
         )
         if menu is None:
             return OperationResult(status=False, message="Test data loading failed")
@@ -24,7 +24,7 @@ def create_test_db(n: int = 1) -> OperationResult:
             submenu = crud.create_submenu(
                 menu.id,
                 SubmenuCreate(
-                    title=submenu_data["title"], description=submenu_data["desc"]
+                    title=submenu_data["title"], description=submenu_data["description"]
                 ),
             )
             if submenu is None:
@@ -35,7 +35,7 @@ def create_test_db(n: int = 1) -> OperationResult:
                     submenu.id,
                     DishCreate.construct(
                         title=dish_data["title"],
-                        description=dish_data["desc"],
+                        description=dish_data["description"],
                         price=dish_data["price"],
                     ),
                 )

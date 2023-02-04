@@ -15,5 +15,5 @@ class GeneratingTaskTicket:
 
 @dataclass
 class GeneratingTaskResult:
-    is_success: OperationResult
+    result: OperationResult
     link: str | None = None
