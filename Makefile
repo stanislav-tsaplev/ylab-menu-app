@@ -29,6 +29,22 @@ up-both:
 	docker-compose -f $(DOCKER_COMPOSE_APP) up -d
 	docker-compose -f $(DOCKER_COMPOSE_TEST) up -d
 
+.PHONY: start-app
+start-app:
+	docker-compose -f $(DOCKER_COMPOSE_APP) start
+
+.PHONY: start-test
+start-test:
+	docker-compose -f $(DOCKER_COMPOSE_TEST) start
+
+.PHONY: stop-app
+stop-app:
+	docker-compose -f $(DOCKER_COMPOSE_APP) stop
+
+.PHONY: stop-test
+stop-test:
+	docker-compose -f $(DOCKER_COMPOSE_TEST) stop
+
 
 .PHONY: down-app
 down-app:
