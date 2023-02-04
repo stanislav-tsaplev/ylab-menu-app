@@ -1,1 +1,1 @@
-from .http_exception_response import http_exception_response
+from .http_exception_response_helper import http_exception_response
