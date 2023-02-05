@@ -1,16 +1,16 @@
 import yaml
 from fastapi import APIRouter, status
 
-from ....app.v1 import crud
-from ....app.v1.models import MenuCreate, SubmenuCreate, DishCreate, OperationResult
+from .. import crud
+from ..models import MenuCreate, SubmenuCreate, DishCreate, OperationResult
 
-router = APIRouter(prefix="/_srv/v1")
+router = APIRouter(prefix="/_srv/v1/db/data")
 
 
-@router.post("/data/test/", status_code=status.HTTP_201_CREATED)
-@router.post("/data/test/{n}", status_code=status.HTTP_201_CREATED)
+@router.post("/test-dataset/", status_code=status.HTTP_201_CREATED)
+@router.post("/test-dataset/{n}", status_code=status.HTTP_201_CREATED)
 async def create_test_dataset(n: int = 1) -> OperationResult:
-    with open(f"src/service/v1/resources/test_dataset_{n}.yaml") as test_dataset_file:
+    with open(f"src/app/v1/_srv/test_dataset_{n}.yaml") as test_dataset_file:
         test_dataset_data = yaml.safe_load(test_dataset_file)
 
     for menu_data in test_dataset_data["menus"]:
@@ -47,7 +47,7 @@ async def create_test_dataset(n: int = 1) -> OperationResult:
     return OperationResult(status=True, message="Test data was successfully loaded")
 
 
-@router.delete("/data/")
+@router.delete("/")
 async def clear_test_db() -> OperationResult:
     all_menus = await crud.read_all_menus()
     for menu in all_menus:

@@ -1,9 +1,9 @@
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from ..service.v1.routers import _srv_test_dataset
 from .database import init_db
 from .v1.routers import menu, submenu, dish, catalog
+from .v1._srv import _db_data
 
 load_dotenv()
 
@@ -14,7 +14,7 @@ app.include_router(submenu.router, tags=["submenu"])
 app.include_router(dish.router, tags=["dish"])
 app.include_router(catalog.router, tags=["catalog"])
 
-app.include_router(_srv_test_dataset.router)
+app.include_router(_db_data.router)
 
 
 @app.on_event("startup")
