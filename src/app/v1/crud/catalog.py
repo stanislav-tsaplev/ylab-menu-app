@@ -1,7 +1,7 @@
-from ..db.catalog import fetch_catalog
+from .. import db
 from ..models.catalog import Catalog
 
 
-def read_catalog() -> Catalog:
-    catalog_json = fetch_catalog()
+async def read_catalog() -> Catalog:
+    catalog_json = await db.fetch_catalog()
     return Catalog.from_dict(catalog_json)

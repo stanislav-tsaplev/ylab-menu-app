@@ -23,10 +23,10 @@ router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus")
         status_code=status.HTTP_404_NOT_FOUND, detail="menu not found"
     ),
 )
-def create_submenu(
+async def create_submenu(
     menu_id: UUID, submenu_creating_data: SubmenuCreate
 ) -> SubmenuCreated:
-    created_submenu = crud.create_submenu(menu_id, submenu_creating_data)
+    created_submenu = await crud.create_submenu(menu_id, submenu_creating_data)
     if created_submenu is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="menu not found"
@@ -40,10 +40,10 @@ def create_submenu(
         status_code=status.HTTP_404_NOT_FOUND, detail="submenu not found"
     ),
 )
-def update_submenu(
+async def update_submenu(
     menu_id: UUID, submenu_id: UUID, submenu_updating_data: SubmenuUpdate
 ) -> SubmenuUpdated:
-    updated_submenu = crud.update_submenu(submenu_id, submenu_updating_data)
+    updated_submenu = await crud.update_submenu(submenu_id, submenu_updating_data)
     if updated_submenu is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="submenu not found"
@@ -52,8 +52,8 @@ def update_submenu(
 
 
 @router.delete("/{submenu_id}")
-def delete_submenu(menu_id: UUID, submenu_id: UUID) -> OperationResult:
-    crud.delete_submenu(menu_id, submenu_id)
+async def delete_submenu(menu_id: UUID, submenu_id: UUID) -> OperationResult:
+    await crud.delete_submenu(menu_id, submenu_id)
     return OperationResult(status=True, message="The submenu has been deleted")
 
 
@@ -63,8 +63,8 @@ def delete_submenu(menu_id: UUID, submenu_id: UUID) -> OperationResult:
         status_code=status.HTTP_404_NOT_FOUND, detail="submenu not found"
     ),
 )
-def read_submenu(menu_id: UUID, submenu_id: UUID) -> SubmenuRead:
-    submenu = crud.read_submenu(submenu_id)
+async def read_submenu(menu_id: UUID, submenu_id: UUID) -> SubmenuRead:
+    submenu = await crud.read_submenu(submenu_id)
     if submenu is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="submenu not found"
@@ -73,5 +73,5 @@ def read_submenu(menu_id: UUID, submenu_id: UUID) -> SubmenuRead:
 
 
 @router.get("/")
-def read_all_submenus(menu_id: UUID) -> list[SubmenuRead]:
-    return crud.read_all_submenus(menu_id)
+async def read_all_submenus(menu_id: UUID) -> list[SubmenuRead]:
+    return await crud.read_all_submenus(menu_id)

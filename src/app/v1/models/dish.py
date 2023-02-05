@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from .submenu import Submenu
 
 
-class Dish(SQLModel, table=True):  # type: ignore
+class Dish(SQLModel, table=True):  # type: ignore[call-arg]
     __table_args__ = (
         ForeignKeyConstraint(["submenu_id"], ["submenu.id"], ondelete="CASCADE"),
     )
@@ -16,7 +16,7 @@ class Dish(SQLModel, table=True):  # type: ignore
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     title: str
     description: str | None = None
-    price: condecimal(decimal_places=2) = Field(default=0)  # type: ignore
+    price: condecimal(decimal_places=2) = Field(default=0)  # type: ignore[valid-type]
 
     submenu_id: UUID | None = Field(default=None)
     submenu: Optional["Submenu"] = Relationship(back_populates="dishes")
@@ -26,7 +26,7 @@ class DishCreate(SQLModel):
     title: str
     description: str | None = None
     submenu_id: UUID | None = None
-    price: condecimal(decimal_places=2)  # type: ignore
+    price: condecimal(decimal_places=2)  # type: ignore[valid-type]
 
 
 class DishCreated(SQLModel):
@@ -39,7 +39,7 @@ class DishCreated(SQLModel):
 class DishUpdate(SQLModel):
     title: str | None = None
     description: str | None = None
-    price: condecimal(decimal_places=2) | None = None  # type: ignore
+    price: condecimal(decimal_places=2) | None = None  # type: ignore[valid-type]
 
 
 class DishUpdated(SQLModel):

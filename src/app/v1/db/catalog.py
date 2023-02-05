@@ -1,11 +1,12 @@
-from sqlmodel import Session, select, func
+from sqlmodel import select, func
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from ...database import db_engine
 from ..models import Menu, Submenu, Dish
 
 
-def fetch_catalog():
-    with Session(db_engine) as session:
+async def fetch_catalog():
+    async with AsyncSession(db_engine) as session:
         submenus_query = (
             select(
                 Submenu.id,
@@ -61,7 +62,7 @@ def fetch_catalog():
             ).label("menus")
         )
 
-        db_catalog = session.exec(
+        db_catalog = await session.exec(
             select(
                 func.json_build_object("menus", catalog_query.c.menus).label("catalog")
             )

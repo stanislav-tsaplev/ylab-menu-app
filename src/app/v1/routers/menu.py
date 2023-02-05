@@ -11,8 +11,8 @@ router = APIRouter(prefix="/api/v1/menus")
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-def create_menu(menu_creating_data: MenuCreate) -> MenuCreated:
-    created_menu = crud.create_menu(menu_creating_data)
+async def create_menu(menu_creating_data: MenuCreate) -> MenuCreated:
+    created_menu = await crud.create_menu(menu_creating_data)
     return created_menu
 
 
@@ -22,8 +22,8 @@ def create_menu(menu_creating_data: MenuCreate) -> MenuCreated:
         status_code=status.HTTP_404_NOT_FOUND, detail="menu not found"
     ),
 )
-def update_menu(menu_id: UUID, menu_updating_data: MenuUpdate) -> MenuUpdated:
-    updated_menu = crud.update_menu(menu_id, menu_updating_data)
+async def update_menu(menu_id: UUID, menu_updating_data: MenuUpdate) -> MenuUpdated:
+    updated_menu = await crud.update_menu(menu_id, menu_updating_data)
     if updated_menu is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="menu not found"
@@ -32,8 +32,8 @@ def update_menu(menu_id: UUID, menu_updating_data: MenuUpdate) -> MenuUpdated:
 
 
 @router.delete("/{menu_id}")
-def delete_menu(menu_id: UUID) -> OperationResult:
-    crud.delete_menu(menu_id)
+async def delete_menu(menu_id: UUID) -> OperationResult:
+    await crud.delete_menu(menu_id)
     return OperationResult(status=True, message="The menu has been deleted")
 
 
@@ -43,8 +43,8 @@ def delete_menu(menu_id: UUID) -> OperationResult:
         status_code=status.HTTP_404_NOT_FOUND, detail="menu not found"
     ),
 )
-def read_menu(menu_id: UUID) -> MenuRead:
-    menu = crud.read_menu(menu_id)
+async def read_menu(menu_id: UUID) -> MenuRead:
+    menu = await crud.read_menu(menu_id)
     if menu is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="menu not found"
@@ -52,6 +52,7 @@ def read_menu(menu_id: UUID) -> MenuRead:
     return menu
 
 
-@router.get("/", response_model=list[MenuRead])
-def read_all_menus():
-    return crud.read_all_menus()
+@router.get("/")
+async def read_all_menus() -> list[MenuRead]:
+    all_menus = await crud.read_all_menus()
+    return all_menus

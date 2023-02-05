@@ -15,10 +15,10 @@ router = APIRouter(prefix="/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes"
     status_code=201,
     responses=http_exception_response(status_code=404, detail="submenu not found"),
 )
-def create_dish(
+async def create_dish(
     menu_id: UUID, submenu_id: UUID, dish_creating_data: DishCreate
 ) -> DishCreated:
-    created_dish = crud.create_dish(submenu_id, dish_creating_data)
+    created_dish = await crud.create_dish(submenu_id, dish_creating_data)
     if created_dish is None:
         raise HTTPException(status_code=404, detail="submenu not found")
     return created_dish
@@ -28,21 +28,23 @@ def create_dish(
     "/{dish_id}",
     responses=http_exception_response(status_code=404, detail="dish not found"),
 )
-def update_dish(
+async def update_dish(
     menu_id: UUID,
     submenu_id: UUID,
     dish_id: UUID,
     dish_updating_data: DishUpdate,
 ) -> DishUpdated:
-    updated_dish = crud.update_dish(dish_id, dish_updating_data)
+    updated_dish = await crud.update_dish(dish_id, dish_updating_data)
     if updated_dish is None:
         raise HTTPException(status_code=404, detail="dish not found")
     return updated_dish
 
 
 @router.delete("/{dish_id}")
-def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> OperationResult:
-    crud.delete_dish(menu_id, submenu_id, dish_id)
+async def delete_dish(
+    menu_id: UUID, submenu_id: UUID, dish_id: UUID
+) -> OperationResult:
+    await crud.delete_dish(menu_id, submenu_id, dish_id)
     return OperationResult(status=True, message="The dish has been deleted")
 
 
@@ -50,13 +52,13 @@ def delete_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> OperationResu
     "/{dish_id}",
     responses=http_exception_response(status_code=404, detail="dish not found"),
 )
-def read_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> DishRead:
-    dish = crud.read_dish(dish_id)
+async def read_dish(menu_id: UUID, submenu_id: UUID, dish_id: UUID) -> DishRead:
+    dish = await crud.read_dish(dish_id)
     if dish is None:
         raise HTTPException(status_code=404, detail="dish not found")
     return dish
 
 
 @router.get("/")
-def read_all_dishes(menu_id: UUID, submenu_id: UUID) -> list[DishRead]:
-    return crud.read_all_dishes(submenu_id)
+async def read_all_dishes(menu_id: UUID, submenu_id: UUID) -> list[DishRead]:
+    return await crud.read_all_dishes(submenu_id)

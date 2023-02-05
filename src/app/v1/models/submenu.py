@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 from .dish import Dish
 
 
-class Submenu(SQLModel, table=True):  # type: ignore
+class Submenu(SQLModel, table=True):  # type: ignore[call-arg]
     __table_args__ = (
         ForeignKeyConstraint(["menu_id"], ["menu.id"], ondelete="CASCADE"),
     )

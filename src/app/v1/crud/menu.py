@@ -4,41 +4,43 @@ from .. import cache, db
 from ..models.menu import MenuCreate, MenuCreated, MenuRead, MenuUpdate, MenuUpdated
 
 
-def create_menu(menu_creating_data: MenuCreate) -> MenuCreated:
-    db_menu = db.create_menu(menu_creating_data)
-    # cache.put_menu(db_menu)
+async def create_menu(menu_creating_data: MenuCreate) -> MenuCreated:
+    db_menu = await db.create_menu(menu_creating_data)
+    # await cache.put_menu(db_menu)
 
     return db_menu
 
 
-def update_menu(menu_id: UUID, menu_updating_data: MenuUpdate) -> MenuUpdated | None:
-    db_menu = db.update_menu(menu_id, menu_updating_data)
+async def update_menu(
+    menu_id: UUID, menu_updating_data: MenuUpdate
+) -> MenuUpdated | None:
+    db_menu = await db.update_menu(menu_id, menu_updating_data)
     if db_menu is None:
         return None
 
-    cache.delete_menu(menu_id)
-    # cache.put_menu(db_menu)
+    await cache.delete_menu(menu_id)
+    # await cache.put_menu(db_menu)
 
     return db_menu
 
 
-def delete_menu(menu_id: UUID) -> None:
-    db.delete_menu(menu_id)
-    cache.delete_menu(menu_id, cascade=True)
+async def delete_menu(menu_id: UUID) -> None:
+    await db.delete_menu(menu_id)
+    await cache.delete_menu(menu_id, cascade=True)
 
 
-def read_menu(menu_id: UUID) -> MenuRead | None:
-    cached_menu = cache.get_menu(menu_id)
+async def read_menu(menu_id: UUID) -> MenuRead | None:
+    cached_menu = await cache.get_menu(menu_id)
     if cached_menu is not None:
         return cached_menu
 
-    db_menu = db.read_menu(menu_id)
+    db_menu = await db.read_menu(menu_id)
     if db_menu is not None:
-        cache.put_menu(db_menu)
+        await cache.put_menu(db_menu)
         return db_menu
 
     return None
 
 
-def read_all_menus() -> list[MenuRead]:
-    return db.read_all_menus()
+async def read_all_menus() -> list[MenuRead]:
+    return await db.read_all_menus()

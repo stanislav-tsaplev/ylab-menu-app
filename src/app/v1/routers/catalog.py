@@ -10,8 +10,8 @@ router = APIRouter(prefix="/api/v1/catalog")
 
 
 @router.post("/", status_code=status.HTTP_202_ACCEPTED)
-def generate_catalog() -> GeneratingTaskTicket:
-    catalog = read_catalog()
+async def generate_catalog() -> GeneratingTaskTicket:
+    catalog = await read_catalog()
 
     ticket_id = uuid4()
     xls_filename = f"xls/{ticket_id}.xlsx"
@@ -21,7 +21,7 @@ def generate_catalog() -> GeneratingTaskTicket:
 
 
 @router.get("/{ticket_id}")
-def get_catalog_link(ticket_id: UUID) -> GeneratingTaskResult:
+async def get_catalog_link(ticket_id: UUID) -> GeneratingTaskResult:
     return GeneratingTaskResult(
         result=OperationResult(status=True, message="Demanded catalog is ready"),
         link=f"xls/{ticket_id}.xlsx",
