@@ -1,19 +1,19 @@
 import yaml
 from fastapi import APIRouter, status
 
-from .. import crud
-from ..models import MenuCreate, SubmenuCreate, DishCreate, OperationResult
+from ....app.v1 import crud
+from ....app.v1.models import MenuCreate, SubmenuCreate, DishCreate, OperationResult
 
-router = APIRouter(prefix="/api/v1")
+router = APIRouter(prefix="/_srv/v1")
 
 
-@router.post("/test-db/", status_code=status.HTTP_201_CREATED)
-@router.post("/test-db/{n}", status_code=status.HTTP_201_CREATED)
-def create_test_db(n: int = 1) -> OperationResult:
-    with open(f"/app/v1/_staff/test_db_{n}.yaml") as test_db_file:
-        test_db_data = yaml.safe_load(test_db_file)
+@router.post("/data/test/", status_code=status.HTTP_201_CREATED)
+@router.post("/data/test/{n}", status_code=status.HTTP_201_CREATED)
+def create_test_dataset(n: int = 1) -> OperationResult:
+    with open(f"src/service/v1/resources/test_dataset_{n}.yaml") as test_dataset_file:
+        test_dataset_data = yaml.safe_load(test_dataset_file)
 
-    for menu_data in test_db_data["menus"]:
+    for menu_data in test_dataset_data["menus"]:
         menu = crud.create_menu(
             MenuCreate(title=menu_data["title"], description=menu_data["description"])
         )
@@ -47,8 +47,9 @@ def create_test_db(n: int = 1) -> OperationResult:
     return OperationResult(status=True, message="Test data was successfully loaded")
 
 
-@router.delete("/test-db/")
+@router.delete("/data/")
 def clear_test_db() -> OperationResult:
-    for menu in crud.read_all_menus():
+    all_menus = crud.read_all_menus()
+    for menu in all_menus:
         crud.delete_menu(menu.id)
     return OperationResult(status=True, message="Database was successfully cleared")
