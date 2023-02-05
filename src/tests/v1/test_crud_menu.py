@@ -1,4 +1,4 @@
-from .conftest import app
+from .conftest import app, pytest
 from .resources.menu import (
     created_menu_data,
     creating_menu_data,
@@ -9,10 +9,12 @@ from .resources.menu import (
     updating_menu_data,
 )
 
+pytestmark = pytest.mark.anyio
 
-def test_create_menu(client):
+
+async def test_create_menu(client):
     route_url = app.url_path_for("create_menu")
-    response = client.post(url=route_url, json=creating_menu_data)
+    response = await client.post(url=route_url, json=creating_menu_data)
 
     assert response.status_code == 201
 
@@ -23,9 +25,9 @@ def test_create_menu(client):
     }
 
 
-def test_update_menu_success(client, existing_menu_id):
+async def test_update_menu_success(client, existing_menu_id):
     route_url = app.url_path_for("update_menu", menu_id=existing_menu_id)
-    response = client.patch(url=route_url, json=updating_menu_data)
+    response = await client.patch(url=route_url, json=updating_menu_data)
 
     assert response.status_code == 200
     assert response.json() == {
@@ -34,25 +36,25 @@ def test_update_menu_success(client, existing_menu_id):
     }
 
 
-def test_update_menu_fail(client, non_existing_menu_id):
+async def test_update_menu_fail(client, non_existing_menu_id):
     route_url = app.url_path_for("update_menu", menu_id=non_existing_menu_id)
-    response = client.patch(url=route_url, json=updating_menu_data)
+    response = await client.patch(url=route_url, json=updating_menu_data)
 
     assert response.status_code == 404
     assert response.json() == not_found_menu_response
 
 
-def test_delete_menu(client, existing_menu_id):
+async def test_delete_menu(client, existing_menu_id):
     route_url = app.url_path_for("delete_menu", menu_id=existing_menu_id)
-    response = client.delete(url=route_url)
+    response = await client.delete(url=route_url)
 
     assert response.status_code == 200
     assert response.json() == deleted_menu_response
 
 
-def test_read_menu_success(client, existing_menu_id):
+async def test_read_menu_success(client, existing_menu_id):
     route_url = app.url_path_for("read_menu", menu_id=existing_menu_id)
-    response = client.get(url=route_url)
+    response = await client.get(url=route_url)
 
     assert response.status_code == 200
     assert response.json() == {
@@ -61,22 +63,20 @@ def test_read_menu_success(client, existing_menu_id):
     }
 
 
-def test_read_menu_fail(client, non_existing_menu_id):
+async def test_read_menu_fail(client, non_existing_menu_id):
     route_url = app.url_path_for("read_menu", menu_id=non_existing_menu_id)
-    response = client.get(url=route_url)
+    response = await client.get(url=route_url)
 
     assert response.status_code == 404
     assert response.json() == not_found_menu_response
 
 
-def test_read_all_menus(client, existing_menu_id):
+async def test_read_all_menus(client, existing_menu_id):
     route_url = app.url_path_for("read_all_menus")
-    response = client.get(url=route_url)
+    response = await client.get(url=route_url)
 
     assert response.status_code == 200
-
-    response_json = response.json()
-    assert response_json == [
+    assert response.json() == [
         {
             **read_menu_data,
             "id": existing_menu_id,

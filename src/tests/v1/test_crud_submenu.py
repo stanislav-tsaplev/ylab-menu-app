@@ -1,4 +1,4 @@
-from .conftest import app
+from .conftest import app, pytest
 from .resources.submenu import (
     created_submenu_data,
     creating_submenu_data,
@@ -9,10 +9,12 @@ from .resources.submenu import (
     updating_submenu_data,
 )
 
+pytestmark = pytest.mark.anyio
 
-def test_create_submenu(client, existing_menu_id):
+
+async def test_create_submenu(client, existing_menu_id):
     route_url = app.url_path_for("create_submenu", menu_id=existing_menu_id)
-    response = client.post(url=route_url, json=creating_submenu_data)
+    response = await client.post(url=route_url, json=creating_submenu_data)
 
     assert response.status_code == 201
 
@@ -23,11 +25,11 @@ def test_create_submenu(client, existing_menu_id):
     }
 
 
-def test_update_submenu_success(client, existing_menu_id, existing_submenu_id):
+async def test_update_submenu_success(client, existing_menu_id, existing_submenu_id):
     route_url = app.url_path_for(
         "update_submenu", menu_id=existing_menu_id, submenu_id=existing_submenu_id
     )
-    response = client.patch(url=route_url, json=updating_submenu_data)
+    response = await client.patch(url=route_url, json=updating_submenu_data)
 
     assert response.status_code == 200
     assert response.json() == {
@@ -36,31 +38,31 @@ def test_update_submenu_success(client, existing_menu_id, existing_submenu_id):
     }
 
 
-def test_update_submenu_fail(client, existing_menu_id, non_existing_submenu_id):
+async def test_update_submenu_fail(client, existing_menu_id, non_existing_submenu_id):
     route_url = app.url_path_for(
         "update_submenu", menu_id=existing_menu_id, submenu_id=non_existing_submenu_id
     )
-    response = client.patch(url=route_url, json=updating_submenu_data)
+    response = await client.patch(url=route_url, json=updating_submenu_data)
 
     assert response.status_code == 404
     assert response.json() == not_found_submenu_response
 
 
-def test_delete_submenu(client, existing_menu_id, existing_submenu_id):
+async def test_delete_submenu(client, existing_menu_id, existing_submenu_id):
     route_url = app.url_path_for(
         "delete_submenu", menu_id=existing_menu_id, submenu_id=existing_submenu_id
     )
-    response = client.delete(url=route_url)
+    response = await client.delete(url=route_url)
 
     assert response.status_code == 200
     assert response.json() == deleted_submenu_response
 
 
-def test_read_submenu_success(client, existing_menu_id, existing_submenu_id):
+async def test_read_submenu_success(client, existing_menu_id, existing_submenu_id):
     route_url = app.url_path_for(
         "read_submenu", menu_id=existing_menu_id, submenu_id=existing_submenu_id
     )
-    response = client.get(url=route_url)
+    response = await client.get(url=route_url)
 
     assert response.status_code == 200
     assert response.json() == {
@@ -69,24 +71,22 @@ def test_read_submenu_success(client, existing_menu_id, existing_submenu_id):
     }
 
 
-def test_read_submenu_fail(client, existing_menu_id, non_existing_submenu_id):
+async def test_read_submenu_fail(client, existing_menu_id, non_existing_submenu_id):
     route_url = app.url_path_for(
         "read_submenu", menu_id=existing_menu_id, submenu_id=non_existing_submenu_id
     )
-    response = client.get(url=route_url)
+    response = await client.get(url=route_url)
 
     assert response.status_code == 404
     assert response.json() == not_found_submenu_response
 
 
-def test_read_all_submenus(client, existing_menu_id, existing_submenu_id):
+async def test_read_all_submenus(client, existing_menu_id, existing_submenu_id):
     route_url = app.url_path_for("read_all_submenus", menu_id=existing_menu_id)
-    response = client.get(url=route_url)
+    response = await client.get(url=route_url)
 
     assert response.status_code == 200
-
-    response_json = response.json()
-    assert response_json == [
+    assert response.json() == [
         {
             **read_submenu_data,
             "id": existing_submenu_id,

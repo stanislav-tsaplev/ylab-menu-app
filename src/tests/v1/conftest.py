@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 import pytest
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 from sqlmodel import SQLModel
 
 from app.database import db_engine
@@ -9,64 +9,72 @@ from app.main import app
 
 from .resources import creating_dish_data, creating_menu_data, creating_submenu_data
 
+pytestmark = pytest.mark.anyio
+
 BASE_URL = "http://127.0.0.1:8000"
 
 
+@pytest.fixture(scope="session")
+def anyio_backend():
+    return "asyncio"
+
+
 @pytest.fixture(autouse=True)
-def reset_database():
-    SQLModel.metadata.drop_all(db_engine)
-    SQLModel.metadata.create_all(db_engine)
+async def reset_database(anyio_backend):
+    async with db_engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.drop_all)
+        await conn.run_sync(SQLModel.metadata.create_all)
 
 
 @pytest.fixture(scope="session")
-def client():
-    test_client = TestClient(app, base_url=BASE_URL)
-    yield test_client
+async def client(anyio_backend):
+    async with AsyncClient(app=app, base_url=BASE_URL) as test_client:
+        yield test_client
 
 
 @pytest.fixture
-def created_menu(client):
+async def created_menu(client: AsyncClient):
     route_url = app.url_path_for("create_menu")
-    response = client.post(url=route_url, json=creating_menu_data)
+    response = await client.post(url=route_url, json=creating_menu_data)
     assert response.status_code == 201
 
-    yield response.json()
+    return response.json()
 
 
 @pytest.fixture
-def created_submenu(client, created_menu):
+async def created_submenu(client: AsyncClient, created_menu: dict):
     route_url = app.url_path_for("create_submenu", menu_id=created_menu["id"])
-    response = client.post(url=route_url, json=creating_submenu_data)
+    response = await client.post(url=route_url, json=creating_submenu_data)
     assert response.status_code == 201
 
-    yield {**response.json(), "menu_id": created_menu["id"]}
+    return {**response.json(), "menu_id": created_menu["id"]}
 
 
 @pytest.fixture
-def created_dish(client, created_submenu):
+async def created_dish(client: AsyncClient, created_submenu: dict):
     route_url = app.url_path_for(
         "create_dish",
         menu_id=created_submenu["menu_id"],
         submenu_id=created_submenu["id"],
     )
-    response = client.post(url=route_url, json=creating_dish_data)
+    response = await client.post(url=route_url, json=creating_dish_data)
     assert response.status_code == 201
 
     yield response.json()
 
 
 @pytest.fixture()
-def existing_menu_id(created_menu):
+def existing_menu_id(created_menu: dict):
     return created_menu["id"]
 
 
 @pytest.fixture()
-def existing_submenu_id(created_submenu):
+def existing_submenu_id(created_submenu: dict):
     return created_submenu["id"]
 
 
 @pytest.fixture()
-def existing_dish_id(created_dish):
+def existing_dish_id(created_dish: dict):
     return created_dish["id"]
 
 

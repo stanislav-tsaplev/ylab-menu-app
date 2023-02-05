@@ -1,4 +1,4 @@
-from .conftest import app
+from .conftest import app, pytest
 from .resources.dish import (
     created_dish_data,
     creating_dish_data,
@@ -9,12 +9,14 @@ from .resources.dish import (
     updating_dish_data,
 )
 
+pytestmark = pytest.mark.anyio
 
-def test_create_dish(client, existing_menu_id, existing_submenu_id):
+
+async def test_create_dish(client, existing_menu_id, existing_submenu_id):
     route_url = app.url_path_for(
         "create_dish", menu_id=existing_menu_id, submenu_id=existing_submenu_id
     )
-    response = client.post(url=route_url, json=creating_dish_data)
+    response = await client.post(url=route_url, json=creating_dish_data)
 
     assert response.status_code == 201
 
@@ -25,7 +27,7 @@ def test_create_dish(client, existing_menu_id, existing_submenu_id):
     }
 
 
-def test_update_dish_success(
+async def test_update_dish_success(
     client, existing_menu_id, existing_submenu_id, existing_dish_id
 ):
     route_url = app.url_path_for(
@@ -34,7 +36,7 @@ def test_update_dish_success(
         submenu_id=existing_submenu_id,
         dish_id=existing_dish_id,
     )
-    response = client.patch(url=route_url, json=updating_dish_data)
+    response = await client.patch(url=route_url, json=updating_dish_data)
 
     assert response.status_code == 200
     assert response.json() == {
@@ -43,7 +45,7 @@ def test_update_dish_success(
     }
 
 
-def test_update_dish_fail(
+async def test_update_dish_fail(
     client, existing_menu_id, existing_submenu_id, non_existing_dish_id
 ):
     route_url = app.url_path_for(
@@ -52,26 +54,28 @@ def test_update_dish_fail(
         submenu_id=existing_submenu_id,
         dish_id=non_existing_dish_id,
     )
-    response = client.patch(url=route_url, json=updating_dish_data)
+    response = await client.patch(url=route_url, json=updating_dish_data)
 
     assert response.status_code == 404
     assert response.json() == not_found_dish_response
 
 
-def test_delete_dish(client, existing_menu_id, existing_submenu_id, existing_dish_id):
+async def test_delete_dish(
+    client, existing_menu_id, existing_submenu_id, existing_dish_id
+):
     route_url = app.url_path_for(
         "delete_dish",
         menu_id=existing_menu_id,
         submenu_id=existing_submenu_id,
         dish_id=existing_dish_id,
     )
-    response = client.delete(url=route_url)
+    response = await client.delete(url=route_url)
 
     assert response.status_code == 200
     assert response.json() == deleted_dish_response
 
 
-def test_read_dish_success(
+async def test_read_dish_success(
     client, existing_menu_id, existing_submenu_id, existing_dish_id
 ):
     route_url = app.url_path_for(
@@ -80,7 +84,7 @@ def test_read_dish_success(
         submenu_id=existing_submenu_id,
         dish_id=existing_dish_id,
     )
-    response = client.get(url=route_url)
+    response = await client.get(url=route_url)
 
     assert response.status_code == 200
     assert response.json() == {
@@ -89,7 +93,7 @@ def test_read_dish_success(
     }
 
 
-def test_read_dish_fail(
+async def test_read_dish_fail(
     client, existing_menu_id, existing_submenu_id, non_existing_dish_id
 ):
     route_url = app.url_path_for(
@@ -98,13 +102,13 @@ def test_read_dish_fail(
         submenu_id=existing_submenu_id,
         dish_id=non_existing_dish_id,
     )
-    response = client.get(url=route_url)
+    response = await client.get(url=route_url)
 
     assert response.status_code == 404
     assert response.json() == not_found_dish_response
 
 
-def test_read_all_dishes(
+async def test_read_all_dishes(
     client, existing_menu_id, existing_submenu_id, existing_dish_id
 ):
     route_url = app.url_path_for(
@@ -112,12 +116,10 @@ def test_read_all_dishes(
         menu_id=existing_menu_id,
         submenu_id=existing_submenu_id,
     )
-    response = client.get(url=route_url)
+    response = await client.get(url=route_url)
 
     assert response.status_code == 200
-
-    response_json = response.json()
-    assert response_json == [
+    assert response.json() == [
         {
             **read_dish_data,
             "id": existing_dish_id,
