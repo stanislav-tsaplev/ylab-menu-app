@@ -23,6 +23,8 @@ isort==5.12.0
 lazy-object-proxy==1.9.0 ; python_version >= '3.7'
 mccabe==0.7.0
 more-itertools==8.14.0 ; python_version >= '3.5'
+mypy==0.991
+mypy-extensions==1.0.0 ; python_version >= '3.5'
 packaging==23.0 ; python_version >= '3.7'
 pep8-naming==0.13.3
 platformdirs==2.6.2 ; python_version >= '3.7'
