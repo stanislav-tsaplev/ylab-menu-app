@@ -1,10 +1,10 @@
-from os import environ as env
+from os import getenv
 
 from redis.asyncio import Redis
 
-REDIS_HOST = env.get("REDIS_HOST", "localhost")
-REDIS_PORT = int(env.get("REDIS_PORT", 6379))
-REDIS_DB = int(env.get("REDIS_DB", 0))
+REDIS_HOST = getenv("REDIS_HOST", "localhost")
+REDIS_PORT = int(getenv("REDIS_PORT", 6379))
+REDIS_DB = int(getenv("REDIS_DB", 0))
 
 REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
