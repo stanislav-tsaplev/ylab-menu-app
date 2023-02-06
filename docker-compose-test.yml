@@ -6,12 +6,14 @@ services:
     container_name: db-test
     ports:
       - 5434:5432
-    env_file:
-      - .docker-test.env
+    environment:
+      POSTGRES_USER: ylab
+      POSTGRES_PASSWORD: ylab
+      POSTGRES_DB: test_menuapp
     networks:
       - nettest
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${DB_NAME} -U $${DB_USER}"]
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 3
@@ -20,16 +22,18 @@ services:
     image: redis:6.2-alpine
     container_name: cache-test
     volumes:
-      - ./redis-test-conf:/conf
-    env_file:
-      - .docker-test.env
-    command: "redis-server /conf/default.conf"
+      - ./redis-conf:/conf
+    environment:
+      REDIS_HOST: cache-test
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+    command: redis-server /conf/test.conf
     networks:
       - netcachetest
     ports:
       - 6383:6379
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: redis-cli ping
       interval: 5s
       timeout: 5s
       retries: 10
@@ -37,25 +41,80 @@ services:
   api-test:
     build:
       context: ./src
-      dockerfile: Dockerfile-test
+      dockerfile: Dockerfile.test
     container_name: api-test
     command: |
       bash -c 'pytest -v'
     volumes:
       - ./src:/src
+      - ./src/xls:/src/xls
     ports:
       - 8080:8000
-    env_file:
-      - .docker-test.env
+    environment:
+      DB_USER: ylab
+      DB_PASS: ylab
+      DB_NAME: test_menuapp
+      DB_HOST: db-test
+
+      REDIS_HOST: cache-test
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+
+      RABBITMQ_USER: ylab
+      RABBITMQ_PASSWORD: ylab
+      RABBITMQ_HOST: broker-test
+      RABBITMQ_PORT: 5672
     networks:
       - nettest
       - netcachetest
+      - netqueuetest
     depends_on:
       db-test:
         condition: service_healthy
       cache-test:
         condition: service_healthy
 
+  broker-test:
+    image: rabbitmq:3.11-alpine
+    container_name: broker-test
+    networks:
+      - netqueuetest
+    ports:
+      - 5673:5672
+      - 15673:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: ylab
+      RABBITMQ_DEFAULT_PASS: ylab
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  worker-test:
+    build:
+      context: ./src
+      dockerfile: Dockerfile.test
+    container_name: worker-test
+    networks:
+      - netqueuetest
+    environment:
+      CELERY_BROKER_URL: amqp://ylab:ylab@broker-test:5672//
+      CELERY_BACKEND_URL: rpc://
+    command: celery --app=app:celeryapp worker --loglevel=INFO
+    healthcheck:
+      test: ["CMD-SHELL", "celery inspect ping -A tasks.add -d celery@worker-test"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      broker-test:
+          condition: service_healthy
+      api-test:
+          condition: service_started
+
 networks:
   nettest: {}
   netcachetest: {}
+  netqueuetest: {}

@@ -6,12 +6,14 @@ services:
     container_name: db-app
     ports:
       - 5433:5432
-    env_file:
-      - .docker-app.env
+    environment:
+      POSTGRES_USER: ylab
+      POSTGRES_PASSWORD: ylab
+      POSTGRES_DB: menuapp
     networks:
       - default
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${DB_NAME} -U $${DB_USER}"]
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 3
@@ -21,15 +23,17 @@ services:
     container_name: cache-app
     volumes:
       - ./redis-conf:/conf
-    env_file:
-      - .docker-app.env
-    command: "redis-server /conf/default.conf"
+    environment:
+      REDIS_HOST: cache-app
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+    command: redis-server /conf/default.conf
     networks:
       - netcache
     ports:
       - 6381:6379
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: redis-cli ping
       interval: 5s
       timeout: 5s
       retries: 10
@@ -37,24 +41,80 @@ services:
   api-app:
     build:
       context: ./src
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.app
     container_name: api-app
     command: |
       bash -c 'alembic upgrade head && uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000'
     volumes:
       - ./src:/src
+      - ./src/xls:/src/xls
     ports:
       - 8000:8000
-    env_file:
-      - .docker-app.env
+    environment:
+      DB_USER: ylab
+      DB_PASS: ylab
+      DB_NAME: menuapp
+      DB_HOST: db-app
+
+      REDIS_HOST: cache-app
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+
+      RABBITMQ_USER: ylab
+      RABBITMQ_PASSWORD: ylab
+      RABBITMQ_HOST: broker-app
+      RABBITMQ_PORT: 5672
+
     networks:
       - default
       - netcache
+      - netqueue
     depends_on:
       db-app:
         condition: service_healthy
       cache-app:
         condition: service_healthy
 
+  broker-app:
+    image: rabbitmq:3.11-alpine
+    container_name: broker-app
+    networks:
+      - netqueue
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: ylab
+      RABBITMQ_DEFAULT_PASS: ylab
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  worker-app:
+    build:
+      context: ./src
+      dockerfile: Dockerfile.app
+    container_name: worker-app
+    networks:
+      - netqueue
+    environment:
+      CELERY_BROKER_URL: amqp://ylab:ylab@broker-app:5672//
+      CELERY_BACKEND_URL: rpc://
+    command: celery --app=app:celeryapp worker --loglevel=INFO
+    healthcheck:
+      test: ["CMD-SHELL", "celery inspect ping -A tasks.add -d celery@worker-app"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      broker-app:
+          condition: service_healthy
+      api-app:
+          condition: service_started
+
 networks:
   netcache: {}
+  netqueue: {}
