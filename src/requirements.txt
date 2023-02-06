@@ -1,10 +1,17 @@
 -i https://pypi.org/simple
 alembic==1.9.2
+amqp==5.1.1 ; python_version >= '3.6'
 anyio==3.6.2 ; python_full_version >= '3.6.2'
 async-timeout==4.0.2 ; python_version >= '3.6'
 asyncpg==0.27.0
+billiard==3.6.4.0
+celery==5.2.7
 certifi==2022.12.7 ; python_version >= '3.6'
+cffi==1.15.1
 click==8.1.3 ; python_version >= '3.7'
+click-didyoumean==0.3.0 ; python_full_version >= '3.6.2' and python_full_version < '4.0.0'
+click-plugins==1.1.1
+click-repl==0.2.0
 dnspython==2.3.0 ; python_version >= '3.7' and python_version < '4.0'
 email-validator==1.3.1
 fastapi[all]==0.89.1
@@ -16,14 +23,19 @@ httpx==0.23.3
 idna==3.4 ; python_version >= '3.5'
 itsdangerous==2.1.2
 jinja2==3.1.2
+kombu==5.2.4 ; python_version >= '3.7'
 mako==1.2.4 ; python_version >= '3.7'
 markupsafe==2.1.2 ; python_version >= '3.7'
 orjson==3.8.5
+prompt-toolkit==3.0.36 ; python_full_version >= '3.6.2'
 psycopg2-binary==2.9.5
+pycparser==2.21
 pydantic==1.10.4 ; python_version >= '3.7'
 python-dotenv==0.21.1
 python-multipart==0.0.5
+pytz==2022.7.1
 pyyaml==6.0
+rabbitmq==0.2.0
 redis==4.4.2
 rfc3986[idna2008]==1.5.0
 six==1.16.0 ; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
@@ -36,6 +48,8 @@ typing-extensions==4.4.0 ; python_version >= '3.7'
 ujson==5.7.0
 uvicorn[standard]==0.20.0
 uvloop==0.17.0
+vine==5.0.0 ; python_version >= '3.6'
 watchfiles==0.18.1
+wcwidth==0.2.6
 websockets==10.4
 xlsxwriter==3.0.8
