@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from uuid import UUID
 
 
 @dataclass
@@ -10,10 +9,11 @@ class OperationResult:
 
 @dataclass
 class TaskTicket:
-    ticket_id: UUID
+    ticket_id: str
 
 
 @dataclass
 class TaskResult:
-    result: OperationResult
-    link: str | None = None
+    ticket_id: str
+    status: str
+    file_path: str | None = None

@@ -1,45 +1,61 @@
-from os import getenv, mkdir
-from os.path import exists as path_exists
-from uuid import UUID, uuid4
+from uuid import uuid4
 
+from celery.result import AsyncResult
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse
 
 from .. import crud
-from ..models.common import TaskTicket, TaskResult, OperationResult
-from ..processing.catalog import generate_xls_file
+from ..models.common import TaskTicket, TaskResult
+from ..processing.tasks import generate_xls_file_task
+from .helpers import http_exception_response
 
-XLS_FILES_FOLDER = getenv("XLS_FILES_FOLDER", "xls")
+XLS_FILES_FOLDER = "/xls"
 
-router = APIRouter(prefix="/api/v1/catalog")
+router = APIRouter(prefix="/api/v1/catalog-request")
 
 
 @router.post("/", status_code=status.HTTP_202_ACCEPTED)
-async def generate_catalog() -> TaskTicket:
+async def request_catalog() -> TaskTicket:
     catalog = await crud.read_catalog()
 
-    ticket_id = uuid4()
-    xls_filename = f"{XLS_FILES_FOLDER}/{ticket_id}.xlsx"
-    if not path_exists(XLS_FILES_FOLDER):
-        mkdir(XLS_FILES_FOLDER)
+    xls_file_id = uuid4()
+    xls_filename = f"{XLS_FILES_FOLDER}/{xls_file_id}.xlsx"
 
-    generate_xls_file(catalog, xls_filename)
-
-    return TaskTicket(ticket_id=ticket_id)
+    task = generate_xls_file_task.delay(catalog, xls_filename)
+    return TaskTicket(ticket_id=str(task))
 
 
 @router.get("/{ticket_id}")
-async def get_catalog_link(ticket_id: UUID) -> TaskResult:
+async def check_catalog_status(ticket_id: str) -> TaskResult:
+    task = AsyncResult(ticket_id)
+
+    if not task.ready():
+        return TaskResult(
+            ticket_id=ticket_id,
+            status=task.status,
+        )
+
+    catalog_file_path = task.get()
     return TaskResult(
-        result=OperationResult(status=True, message="Demanded catalog is ready"),
-        link=f"{XLS_FILES_FOLDER}/{ticket_id}.xlsx",
+        ticket_id=ticket_id,
+        status=task.status,
+        file_path=catalog_file_path,
     )
 
 
-@router.get("/{ticket_id}/download")
-async def download_catalog(ticket_id: UUID) -> FileResponse:
-    if not path_exists(f"{XLS_FILES_FOLDER}/{ticket_id}.xlsx"):
-        return HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No such file"
+@router.get(
+    "/{ticket_id}/result",
+    responses=http_exception_response(
+        status_code=status.HTTP_404_NOT_FOUND, detail="file not found"
+    ),
+)
+async def download_catalog(ticket_id: str) -> FileResponse:
+    task = AsyncResult(ticket_id)
+
+    if not task.ready():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="file not found"
         )
-    return FileResponse(f"{XLS_FILES_FOLDER}/{ticket_id}.xlsx")
+
+    catalog_file_path = task.get()
+    return FileResponse(catalog_file_path)

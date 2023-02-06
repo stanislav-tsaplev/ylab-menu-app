@@ -1,9 +1,7 @@
 import xlsxwriter
 
-from ..models.catalog import Catalog
 
-
-def generate_xls_file(catalog_data: Catalog, xls_filename: str):
+def generate_xls_file(catalog_data: dict, xls_filename: str) -> str:
     workbook = xlsxwriter.Workbook(xls_filename)
     worksheet = workbook.add_worksheet()
 
@@ -16,23 +14,33 @@ def generate_xls_file(catalog_data: Catalog, xls_filename: str):
     worksheet.set_column(3, 3, width=10, cell_format=currency_format)
 
     table_data: list[tuple] = []
-    for menu_num, menu_data in enumerate(catalog_data.menus, start=1):
-        table_data.append((f"{menu_num}", menu_data.title, menu_data.description))
-        for submenu_num, submenu_data in enumerate(menu_data.submenus, start=1):
+    for menu_num, menu_data in enumerate(catalog_data.get("menus", []), start=1):
+        table_data.append(
+            (
+                f"{menu_num}",
+                menu_data.get("title", []),
+                menu_data.get("description", []),
+            )
+        )
+        for submenu_num, submenu_data in enumerate(
+            menu_data.get("submenus", []), start=1
+        ):
             table_data.append(
                 (
                     f"{menu_num}.{submenu_num}",
-                    submenu_data.title,
-                    submenu_data.description,
+                    submenu_data.get("title", []),
+                    submenu_data.get("description", []),
                 )
             )
-            for dish_num, dish_data in enumerate(submenu_data.dishes, start=1):
+            for dish_num, dish_data in enumerate(
+                submenu_data.get("dishes", []), start=1
+            ):
                 table_data.append(
                     (
                         f"{menu_num}.{submenu_num}.{dish_num}",
-                        dish_data.title,
-                        dish_data.description,
-                        dish_data.price,
+                        dish_data.get("title", []),
+                        dish_data.get("description", []),
+                        dish_data.get("price", []),
                     )
                 )
             table_data.append(())
@@ -54,3 +62,4 @@ def generate_xls_file(catalog_data: Catalog, xls_filename: str):
     )
 
     workbook.close()
+    return xls_filename
