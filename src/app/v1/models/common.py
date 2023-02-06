@@ -9,11 +9,11 @@ class OperationResult:
 
 
 @dataclass
-class GeneratingTaskTicket:
+class TaskTicket:
     ticket_id: UUID
 
 
 @dataclass
-class GeneratingTaskResult:
+class TaskResult:
     result: OperationResult
     link: str | None = None

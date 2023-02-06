@@ -62,9 +62,13 @@ async def fetch_catalog():
             ).label("menus")
         )
 
-        db_catalog = await session.exec(
-            select(
-                func.json_build_object("menus", catalog_query.c.menus).label("catalog")
+        db_catalog = (
+            await session.exec(
+                select(
+                    func.json_build_object("menus", catalog_query.c.menus).label(
+                        "catalog"
+                    )
+                )
             )
         ).one()
         return db_catalog

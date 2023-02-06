@@ -10,7 +10,7 @@ router = APIRouter(prefix="/_srv/v1/db/data")
 @router.post("/test-dataset/", status_code=status.HTTP_201_CREATED)
 @router.post("/test-dataset/{n}", status_code=status.HTTP_201_CREATED)
 async def create_test_dataset(n: int = 1) -> OperationResult:
-    with open(f"src/app/v1/_srv/test_dataset_{n}.yaml") as test_dataset_file:
+    with open(f"app/v1/_srv/test_dataset_{n}.yaml") as test_dataset_file:
         test_dataset_data = yaml.safe_load(test_dataset_file)
 
     for menu_data in test_dataset_data["menus"]:
