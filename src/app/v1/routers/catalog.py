@@ -58,4 +58,7 @@ async def download_catalog(ticket_id: str) -> FileResponse:
         )
 
     catalog_file_path = task.get()
-    return FileResponse(catalog_file_path)
+    return FileResponse(
+        path=catalog_file_path,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )

@@ -47,7 +47,7 @@ services:
       bash -c 'pytest -v'
     volumes:
       - ./src:/src
-      - ./src/xls:/src/xls
+      - xls:/xls
     ports:
       - 8080:8000
     environment:
@@ -102,6 +102,8 @@ services:
       CELERY_BROKER_URL: amqp://ylab:ylab@broker-test:5672//
       CELERY_BACKEND_URL: rpc://
     command: celery --app=app:celeryapp worker --loglevel=INFO
+    volumes:
+      - xls:/xls
     healthcheck:
       test: ["CMD-SHELL", "celery inspect ping -A tasks.add -d celery@worker-test"]
       interval: 1m30s
@@ -118,3 +120,6 @@ networks:
   nettest: {}
   netcachetest: {}
   netqueuetest: {}
+
+volumes:
+  xls:
